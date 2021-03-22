@@ -4,6 +4,7 @@ namespace App\Repositories\Acl;
 
 use App\Http\Resources\Acl\PermissionResource;
 use App\Models\Acl\Permission;
+use App\Models\Acl\Plan;
 use App\Repositories\Acl\Contracts\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -33,26 +34,25 @@ class PermissionRepository implements PermissionRepositoryInterface {
     {
         
         try {
+                     
+            $idPermissao = [];
+            $permissions = $this->createData($request->listPermission);
 
-            if (!$request->lote) {
-                
-                $data = $request->all();
+            for ($i=0; $i < count($permissions); $i++) { 
+            
+                foreach ($permissions[$i] as $key => $value) {
+                    $data['name'] = $value . ' ' . $request->name;
+                    $data['permission'] = $key . '_' . $request->permission;
+                }
                 $permission = Permission::create($data);
-
-            } else {
-           
-                $permissions = $this->createData($request);
-
-                for ($i=0; $i < count($permissions); $i++) { 
-                
-                    foreach ($permissions[$i] as $key => $value) {
-                        $data['name'] = $value . ' ' . $request->name;
-                        $data['permission'] = $key . '_' . $request->model;
-                    }
-                    $permission = Permission::create($data);
-                } 
-            }       
-
+                array_push($idPermissao, $permission->id);
+            }
+            
+            if ($request->plan) {
+                $plan = Plan::find($request->plan);
+                $plan->permissions()->attach($idPermissao);
+            }
+          
             return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
         } catch (\Throwable $th) {
@@ -61,10 +61,10 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
 
-    private function createData($request)
+    private function createData($permissions)
     {
         $permission = [];
-        foreach ($request->permission as $value) {
+        foreach ($permissions as $value) {
             if ($value == 'search') {
                 array_push($permission, ['search' => 'Listar']);
             } else if ($value == 'store') {
@@ -89,11 +89,11 @@ class PermissionRepository implements PermissionRepositoryInterface {
         return $permission;
     }
 
-    public function show($uuid)
+    public function show($id)
     {
         try {
 
-            $permission = Permission::where('uuid', $uuid)->first();
+            $permission = Permission::find($id);
 
             return ['status' => true, 'data' => new PermissionResource($permission)];
 
@@ -109,7 +109,8 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
             $data = $request->except(['created_at']);
            
-            $permission = DB::table('permissions')->where('uuid', $request->uuid)->update($data);
+            $permission = Permission::find($request->id);
+            $permission->update($data);
         
             return ['status' => true, 'message' => 'A Permissão foi editada.', 'data' => new PermissionResource($permission)];
            
@@ -119,10 +120,10 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
     
-    public function destroy($uuid)
+    public function destroy($id)
     {
         try {
-            $permission = Permission::where('uuid', $uuid)->first();
+            $permission = Permission::find($id);
           
             $permission->delete();
             

@@ -8,10 +8,10 @@ interface PermissionRepositoryInterface {
 
     public function store($request);
 
-    public function show($uuid);
+    public function show($id);
     
     public function update($request);
 
-    public function destroy($uuid);
+    public function destroy($id);
     
 }
