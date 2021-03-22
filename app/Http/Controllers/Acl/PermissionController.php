@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Gate;
 class PermissionController extends Controller
 {
     private $repository;
-    private $permission;
 
     public function __construct(PermissionRepositoryInterface $repository, Request $request)
     {

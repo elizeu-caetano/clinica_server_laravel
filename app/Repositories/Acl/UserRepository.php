@@ -88,7 +88,7 @@ class UserRepository implements UserRepositoryInterface {
             }
                  
            
-            return ['status' => true, 'data' => new UserResource($user) , 'upadate' => true, 'message' => 'O Usuário foi editado.'];
+            return ['status' => true, 'data' => new UserResource($user) , 'message' => 'O Usuário foi editado.'];
            
         } catch (\Throwable $th) {
 
@@ -100,18 +100,13 @@ class UserRepository implements UserRepositoryInterface {
     {
         try {
             
-            $update = DB::table('users')->where('uuid', $uuid)->update(['active' => 1]);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Usuário foi ativado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para ativar.'];
-            }
-
-
+            $user = DB::table('users')->where('uuid', $uuid)->update(['active' => 1]);
+            
+            return ['status' => true, 'message' => 'O Usuário foi ativado.', 'data' => new UserResource($user)];
+           
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Usuário não foi ativado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -119,18 +114,13 @@ class UserRepository implements UserRepositoryInterface {
     {
         try {
 
-            $update = DB::table('users')->where('uuid', $uuid)->update(['active' => false]);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Usuário foi inativado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para inativar.'];
-            }
-
+            $user = DB::table('users')->where('uuid', $uuid)->update(['active' => false]);
+          
+            return ['status' => true, 'message' => 'O Usuário foi inativado.', 'data' => new UserResource($user)];    
 
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Usuário não foi inativado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -138,15 +128,10 @@ class UserRepository implements UserRepositoryInterface {
     {
         try {
             
-            $update = DB::table('users')->where('uuid', $uuid)->update(['deleted' => true]);
+            $user = DB::table('users')->where('uuid', $uuid)->update(['deleted' => true]);
 
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Usuário foi deletado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para deletar.'];
-            }
-
-
+            return ['status' => true, 'message' => 'O Usuário foi deletado.', 'data' => new UserResource($user)];
+           
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
@@ -157,15 +142,10 @@ class UserRepository implements UserRepositoryInterface {
     {
         try {
 
-            $update = DB::table('users')->where('uuid', $uuid)->update(['deleted' => false]);
+            $user = DB::table('users')->where('uuid', $uuid)->update(['deleted' => false]);
 
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Usuário foi Recuperado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para recuperar.'];
-            }
-
-
+            return ['status' => true, 'message' => 'O Usuário foi Recuperado.', 'data' => new UserResource($user)];
+           
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
@@ -175,9 +155,10 @@ class UserRepository implements UserRepositoryInterface {
     public function destroy($uuid)
     {
         try {
-            $destroy = User::where('uuid', $uuid)->first();
-          
-            $destroy->delete();
+            $user = User::where('uuid', $uuid)->first();
+            
+            $user->phones()->delete();
+            $user->delete();          
             
             return ['status'=>true, 'message'=> 'O Usuário foi excluído.'];
 

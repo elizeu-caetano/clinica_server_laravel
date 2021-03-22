@@ -107,16 +107,12 @@ class PermissionRepository implements PermissionRepositoryInterface {
     {
         try {      
 
-            $data = $request->all();
+            $data = $request->except(['created_at']);
            
-            $update = DB::table('permissions')->where('uuid', $request->uuid)->update($data);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'A Permissão foi editada.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para editar.'];
-            }
-
+            $permission = DB::table('permissions')->where('uuid', $request->uuid)->update($data);
+        
+            return ['status' => true, 'message' => 'A Permissão foi editada.', 'data' => new PermissionResource($permission)];
+           
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'A Permissão não foi editada.', 'error' => $th->getMessage()];
@@ -126,13 +122,14 @@ class PermissionRepository implements PermissionRepositoryInterface {
     public function destroy($uuid)
     {
         try {
-            $destroy = Permission::where('uuid', $uuid)->first();
+            $permission = Permission::where('uuid', $uuid)->first();
           
-            $destroy->delete();
+            $permission->delete();
             
             return ['status'=>true, 'message'=> 'A Permissão foi excluída.'];
 
         } catch (\Throwable $th) {
+            
             return ['status'=>false, 'message'=> 'A Permissão não foi excluído', 'error'=> $th->getMessage()];
         }
     }

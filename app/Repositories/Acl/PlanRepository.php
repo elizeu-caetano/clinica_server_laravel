@@ -52,9 +52,9 @@ class PlanRepository implements PlanRepositoryInterface {
     {
         try {
 
-            $user = Plan::where('uuid', $uuid)->first();
+            $plan = Plan::where('uuid', $uuid)->first();
 
-            return ['status' => true, 'data' => new PlanResource($user)];
+            return ['status' => true, 'data' => new PlanResource($plan)];
 
         } catch (\Throwable $th) {
 
@@ -66,16 +66,13 @@ class PlanRepository implements PlanRepositoryInterface {
     {
         try {      
 
-            $data = $request->all();
+            $data = $request->except(['active', 'created_at']);
            
-            $update = DB::table('plans')->where('uuid', $request->uuid)->update($data);
+            $plan = Plan::where('uuid', $request->uuid)->first();
+            $plan->update($data);
 
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Plano foi editado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para editar.'];
-            }
-
+            return ['status' => true, 'data' => new PlanResource($plan), 'message' => 'O Plano foi editado.'];
+           
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Plano não foi editado.', 'error' => $th->getMessage()];
@@ -86,18 +83,13 @@ class PlanRepository implements PlanRepositoryInterface {
     {
         try {
             
-            $update = DB::table('plans')->where('uuid', $uuid)->update(['active' => 1]);
+            $plan = DB::table('plans')->where('uuid', $uuid)->update(['active' => 1]);
 
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Plano foi ativado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para ativar.'];
-            }
-
-
+            return ['status' => true, 'message' => 'O Plano foi ativado.', 'data' => new PlanResource($plan)];
+          
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'O Plano não foi editado.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Plano não foi ativado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -105,31 +97,27 @@ class PlanRepository implements PlanRepositoryInterface {
     {
         try {
 
-            $update = DB::table('plans')->where('uuid', $uuid)->update(['active' => false]);
+            $plan = DB::table('plans')->where('uuid', $uuid)->update(['active' => false]);
 
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'O Plano foi inativado.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para inativar.'];
-            }
-
+            return ['status' => true, 'message' => 'O Plano foi inativado.', 'data' => new PlanResource($plan)];         
 
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'O Plano não foi editado.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Plano não foi inativado.', 'error' => $th->getMessage()];
         }
     }
     
     public function destroy($uuid)
     {
         try {
-            $destroy = Plan::where('uuid', $uuid)->first();
+            $plan = Plan::where('uuid', $uuid)->first();
           
-            $destroy->delete();
+            $plan->delete();
             
             return ['status'=>true, 'message'=> 'O Plano foi excluído.'];
 
         } catch (\Throwable $th) {
+            
             return ['status'=>false, 'message'=> 'O Plano não foi excluído', 'error'=> $th->getMessage()];
         }
     }

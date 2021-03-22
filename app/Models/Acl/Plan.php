@@ -17,4 +17,9 @@ class Plan extends Model
    {
       return $this->belongsToMany(Permission::class);
    }
+
+   public function setPriceAttribute($value)
+   {
+      $this->attributes['price'] =  str_replace(',', '.', str_replace(array('R$',' ','.'), '', $value));
+   }
 }

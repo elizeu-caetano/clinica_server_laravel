@@ -42,11 +42,11 @@ class RoleRepository implements RoleRepositoryInterface {
 
             $role = Role::create($data);
 
-            return ['status' => true, 'message' => 'A Função foi cadastrada.', 'data' => new RoleResource($role)];
+            return ['status' => true, 'message' => 'O Papel foi cadastrado.', 'data' => new RoleResource($role)];
 
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'O Papel foi cadastrado.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi cadastrado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -77,7 +77,7 @@ class RoleRepository implements RoleRepositoryInterface {
 
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'A Função não foi editada.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi editado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -85,18 +85,13 @@ class RoleRepository implements RoleRepositoryInterface {
     {
         try {
             
-            $update = DB::table('roles')->where('uuid', $uuid)->update(['active' => 1]);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'A Função foi ativada.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para ativar.'];
-            }
-
-
+            $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => 1]);
+          
+            return ['status' => true, 'message' => 'O Papel foi ativado.', 'data' => new RoleResource($role)];
+           
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'A Função não foi editada.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi ativado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -104,18 +99,13 @@ class RoleRepository implements RoleRepositoryInterface {
     {
         try {
 
-            $update = DB::table('roles')->where('uuid', $uuid)->update(['active' => false]);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'A Função foi inativada.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para inativar.'];
-            }
-
-
+            $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => false]);
+           
+            return ['status' => true, 'message' => 'O Papel foi inativado.', 'data' => new RoleResource($role)];
+            
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'A Função não foi editada.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi inativado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -123,18 +113,13 @@ class RoleRepository implements RoleRepositoryInterface {
     {
         try {
             
-            $update = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => true]);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'A Função foi deletada.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para deletar.'];
-            }
-
-
+            $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => true]);
+          
+            return ['status' => true, 'message' => 'O Papel foi deletado.', 'data' => new RoleResource($role)];
+          
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'A Função não foi editada.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi deletado.', 'error' => $th->getMessage()];
         }
     }
 
@@ -142,32 +127,27 @@ class RoleRepository implements RoleRepositoryInterface {
     {
         try {
 
-            $update = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => false]);
-
-            if ($update) {
-                return ['status' => true, 'upadate' => true, 'message' => 'A Função foi Recuperada.'];
-            } else {
-                return ['status' => true, 'upadate' => false, 'message' => 'Sem alterações para recuperar.'];
-            }
-
-
+            $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => false]);
+          
+            return ['status' => true, 'message' => 'O Papel foi recuperado.', 'data' => new RoleResource($role)];
+            
         } catch (\Throwable $th) {
 
-            return ['status' => false, 'message' => 'A Função não foi editada.', 'error' => $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi recuperado.', 'error' => $th->getMessage()];
         }
     }
 
     public function destroy($uuid)
     {
         try {
-            $destroy = Role::where('uuid', $uuid)->first();
+            $role = Role::where('uuid', $uuid)->first();
           
-            $destroy->delete();
+            $role->delete();
             
-            return ['status'=>true, 'message'=> 'A Função foi excluída.'];
+            return ['status'=>true, 'message'=> 'O Papel foi excluído.'];
 
         } catch (\Throwable $th) {
-            return ['status'=>false, 'message'=> 'A Função não foi excluído', 'error'=> $th->getMessage()];
+            return ['status'=>false, 'message'=> 'O Papel não foi excluído', 'error'=> $th->getMessage()];
         }
     }
 }

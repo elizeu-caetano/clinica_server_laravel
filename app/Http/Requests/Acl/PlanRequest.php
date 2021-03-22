@@ -15,7 +15,7 @@ class PlanRequest extends FormRequest
     {       
         $rules = [
             'name' => ['required', 'min:6', 'unique:plans'],
-            'price' => ['required', 'numeric']
+            'price' => ['required']
         ];
 
         if ($this->method() == 'PUT') {
@@ -33,8 +33,7 @@ class PlanRequest extends FormRequest
             'name.required' => 'O Nome é obrigatório.',
             'name.min' => 'O Nome não pode ser menor que 6 caracteres.',
             'name.unique' => 'Já existe um plano com este nome.',
-            'price.required' => 'Digite um Valor.',
-            'price.numeric' => 'O Valor deve conter apenas números'
+            'price.required' => 'Digite um Valor.'
         ];
     }
 
