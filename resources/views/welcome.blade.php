@@ -16,7 +16,6 @@
     <body>
         <div class="container-fluid">
             <h3>Server Clinica</h2>
-                <button type="button" class="btn btn-primary btn-lg btn-block">Voltar</button>
             <h5>2e - Sistemas Inteligentes.</h4>
         </div>
     </body>
