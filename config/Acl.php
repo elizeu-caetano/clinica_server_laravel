@@ -2,6 +2,6 @@
 
 return [
     'superAdmin' => [
-        'elizeucaetano@outlook.com.br'
+        'elizeucaetano@outlook.com'
     ]
 ];

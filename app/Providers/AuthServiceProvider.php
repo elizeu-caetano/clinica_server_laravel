@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Acl\{ 
-    Permission, 
+use App\Models\Acl\{
+    Permission,
     User
 };
 
@@ -42,7 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         }
 
         Gate::before(function(User $user){
-               
+
                 if ($user->isSuperAdmin()) {
                    return true;
                 }
