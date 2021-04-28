@@ -2,8 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\UploadController;
-
 use App\Http\Controllers\Acl\{
     AuthUserController,
     ContractorController,
@@ -12,6 +10,11 @@ use App\Http\Controllers\Acl\{
     RoleController,
     UserController
 };
+use App\Models\Acl\Permission;
+
+Route::get('permissoes', function () {
+    return Permission::all();
+});
 
 Route::post('/auth', [AuthUserController::class, 'auth']);
 
