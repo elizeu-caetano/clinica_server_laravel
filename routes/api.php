@@ -10,13 +10,7 @@ use App\Http\Controllers\Acl\{
     RoleController,
     UserController
 };
-use App\Models\Acl\Permission;
 
-Route::get('permissoes', function () {
-    return Permission::all();
-});
-
-Route::post('/auth', [AuthUserController::class, 'auth']);
 
 Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::get('/authorized', [AuthUserController::class, 'authorized']);
@@ -52,3 +46,5 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::apiResource('users', UserController::class);
 
 });
+
+Route::post('/auth', [AuthUserController::class, 'auth']);

@@ -18,22 +18,22 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-       Gate::authorize('search_user');
-        
+        Gate::authorize('store_user');
+
         return $this->repository->search($request);
     }
 
     public function store(UserRequest $request)
     {
        Gate::authorize('store_user');
-        
+
         return $this->repository->store($request);
     }
 
     public function show($uuid)
     {
        Gate::authorize('show_user');
-        
+
         return $this->repository->show($uuid);
     }
 
@@ -41,42 +41,42 @@ class UserController extends Controller
     public function update(UserRequest $request)
     {
        Gate::authorize('update_user');
-        
+
         return $this->repository->update($request);
     }
 
     public function activate($uuid)
     {
        Gate::authorize('activate_user');
-        
+
         return $this->repository->activate($uuid);
     }
 
     public function inactivate($uuid)
     {
        Gate::authorize('inactivate_user');
-        
+
         return $this->repository->inactivate($uuid);
     }
 
     public function deleted($uuid)
     {
        Gate::authorize('deleted_user');
-        
+
         return $this->repository->deleted($uuid);
     }
 
     public function recover($uuid)
     {
        Gate::authorize('recover_user');
-        
+
         return $this->repository->recover($uuid);
     }
-    
+
     public function destroy($uuid)
     {
        Gate::authorize('destroy_user');
-        
+
         return $this->repository->destroy($uuid);
     }
 }
