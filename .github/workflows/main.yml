@@ -17,3 +17,4 @@ jobs:
         server: ${{ secrets.ftp_clinica_server_host }}
         username: ${{ secrets.ftp_clinica_server_user }}
         password: ${{ secrets.ftp_clinica_server_password }}
+        server-dir: server/
