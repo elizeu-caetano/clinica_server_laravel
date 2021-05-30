@@ -15,16 +15,18 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
     public function auth($request)
     {
         try {
-                      
+
             $user = User::where('email', $request->email)->first();
-            $hour = $request->timeToken ? $request->timeToken : 12; // Defina as horas para expirar o token
-                   
+           // $hour = $request->timeToken ? $request->timeToken : 12; // Defina as horas para expirar o token
+
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return ['status' => false, 'message' => 'Email ou Senha inválida.'];
             }
 
-            Passport::personalAccessTokensExpireIn(now()->addHour($hour));
-            $user->token = $user->createToken($request->device_name)->accessToken;
+            // Passport::personalAccessTokensExpireIn(now()->addHour($hour));
+            // $user->token = $user->createToken($request->device_name)->accessToken;
+            $token = $user->createToken($request->device_name);
+            $user->token = $token->plainTextToken;
 
             $user->permissions = $this->permissions($user);
 
@@ -38,8 +40,8 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
 
     private function permissions($user)
     {
-        $arrayPermissions = $user->permissions();    
-          
+        $arrayPermissions = $user->permissions();
+
         $permissions = [];
         foreach ($arrayPermissions as $value) {
             $permissions[$value] = true;
@@ -49,7 +51,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
     }
 
     public function authorized()
-    {                
+    {
         try {
             return ['status'=>true, "message"=> "Autorizado!"];
         } catch (\Throwable $th) {
@@ -73,7 +75,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
 
             return ['status' => false, 'message' => 'Usuário não foi deslogado.', 'error' => $th->getMessage()];
         }
-       
+
     }
-    
+
 }

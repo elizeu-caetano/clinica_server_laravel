@@ -12,8 +12,6 @@ use Illuminate\Validation\Rule;
 class ContractorRequest extends FormRequest
 {
 
-    
-    
     public function rules()
     {
         $this->cpf_cnpj = $this->type_person == 'F' ? 'cpf' : 'cnpj';
@@ -33,7 +31,7 @@ class ContractorRequest extends FormRequest
         }
 
         return $roles;
-       
+
     }
 
     public function messages()
