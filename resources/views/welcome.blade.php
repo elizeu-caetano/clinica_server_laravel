@@ -14,8 +14,7 @@
 
     </head>
     <body>
-        <div class="container-fluid">
-            <h3>Server Clinica</h3>
+        <div class="container">
             <h4>Servidor da Clinica.</h4>
             <h5>2e - Sistemas Inteligentes.</h5>
         </div>
