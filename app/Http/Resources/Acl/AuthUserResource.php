@@ -17,11 +17,11 @@ class AuthUserResource extends JsonResource
     {
         return [
             'name' => $this->name,
-            'users' => explode(' ', $this->name)[0],
+            'first_name' => explode(' ', $this->name)[0],
             'contractor' => $this->contractor->fantasy_name,
             'token' => $this->token,
-            'logo' => $this->contractor->logo ? Storage::path(env('AWS_URL').$this->contractor->logo) : null,  
-            'photo' => $this->photo ? Storage::path(env('AWS_URL').$this->photo) : null,
+            'logo' => $this->contractor->logo ? env('AWS_URL').$this->contractor->logo : null,
+            'photo' => $this->photo ? env('AWS_URL').$this->photo : null,
             'permissions' => $this->permissions,
             'admin' => $this->admin
         ];

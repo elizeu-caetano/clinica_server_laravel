@@ -8,12 +8,11 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AuthUserRequest extends FormRequest
-{    
-    
+{
+
     public function rules()
-    {       
+    {
         return [
-            //'regex:/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/'
             'email' => ['required', 'email'],
             'password' => ['required', 'numeric', 'digits_between:6,12'],
             'device_name' => ['required']
