@@ -12,7 +12,7 @@ use App\Http\Controllers\Acl\{
 };
 
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::get('/authorized', [AuthUserController::class, 'authorized']);
     Route::post('/logout', [AuthUserController::class, 'logout']);
 

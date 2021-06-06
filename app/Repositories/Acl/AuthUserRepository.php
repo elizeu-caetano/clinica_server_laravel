@@ -5,7 +5,9 @@ namespace App\Repositories\Acl;
 use App\Http\Resources\Acl\AuthUserResource;
 use App\Models\Acl\User;
 use App\Repositories\Acl\Contracts\AuthUserRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Passport;
@@ -18,12 +20,15 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
 
             $user = User::where('email', $request->email)->first();
 
+            //define how many hours for the token to expire
+            $hour = $request->timeToken ? $request->timeToken : 2;
+
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return ['status' => false, 'message' => 'Email ou Senha inválida.'];
             }
 
-            $token = $user->createToken($request->device_name);
-            $user->token = $token->plainTextToken;
+            Passport::personalAccessTokensExpireIn(now()->addMinute($hour));
+            $user->token = $user->createToken($request->device_name)->accessToken;
 
             $user->permissions = $this->permissions($user);
 
@@ -59,12 +64,6 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
     public function logout($request)
     {
         try {
-
-            $idToken = $request->user()->tokens[0]->id;
-
-            DB::table('oauth_access_tokens')->where('id', '=', $idToken)->delete(); // Deleta o token ativo
-
-            DB::table('oauth_access_tokens')->where('expires_at', '<', now())->delete(); // Deleta so tokens expirados
 
             return ['status' => true, 'message' => 'Usuário deslogado'];
 

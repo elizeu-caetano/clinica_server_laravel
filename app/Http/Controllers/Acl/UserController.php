@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        Gate::authorize('store_user');
+        Gate::authorize('search_user');
 
         return $this->repository->search($request);
     }

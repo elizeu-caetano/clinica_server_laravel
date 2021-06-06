@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -31,21 +32,22 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-       // $this->registerPolicies();
+
+        Passport::routes();
 
         $permissions = Permission::all();
 
         foreach ($permissions as $permission) {
-            Gate::define($permission->permission, function(User $user) use ($permission){
+            Gate::define($permission->permission, function (User $user) use ($permission) {
                 return $user->hasPermission($permission->permission);
             });
         }
 
-        Gate::before(function(User $user){
+        Gate::before(function (User $user) {
 
-                if ($user->isSuperAdmin()) {
-                   return true;
-                }
+            if ($user->isSuperAdmin()) {
+                return true;
+            }
         });
     }
 }
