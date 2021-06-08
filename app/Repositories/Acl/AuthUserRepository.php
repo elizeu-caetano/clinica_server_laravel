@@ -21,13 +21,13 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
             $user = User::where('email', $request->email)->first();
 
             //define how many hours for the token to expire
-            $hour = $request->timeToken ? $request->timeToken : 2;
+            $hour = $request->timeToken ? $request->timeToken : 12;
 
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return ['status' => false, 'message' => 'Email ou Senha inválida.'];
             }
 
-            Passport::personalAccessTokensExpireIn(now()->addMinute($hour));
+            Passport::personalAccessTokensExpireIn(now()->addHour($hour));
             $user->token = $user->createToken($request->device_name)->accessToken;
 
             $user->permissions = $this->permissions($user);
