@@ -14,7 +14,7 @@ class AuthUserRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'password' => ['required', 'numeric', 'digits_between:6,12'],
+            'password' => ['required', 'digits_between:6,12'],
             'device_name' => ['required']
         ];
     }
@@ -26,7 +26,6 @@ class AuthUserRequest extends FormRequest
             'email.required' => 'O Email é obrigatório.',
             'email.email' => 'O Email é inválido.',
             'password.required' => 'Digite uma Senha.',
-            'password.numeric' => 'A Senha deve conter apenas números',
             'password.digits_between' => ' A Senha deve ter no mínimo 6 e no máximo 12 caracteres.'
         ];
     }
