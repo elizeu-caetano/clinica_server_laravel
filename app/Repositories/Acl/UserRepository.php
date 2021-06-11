@@ -16,14 +16,14 @@ class UserRepository implements UserRepositoryInterface {
     public function search($request)
     {
         try {
-            
+
             $active = !$request->active ? false : true;
             $search = $request->search;
 
             $users = User::where('deleted', false)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('email', 'LIKE', "%{$search}%");                
+                ->orWhere('email', 'LIKE', "%{$search}%");
             })->get();
 
             return ['status' => true, 'data' => UserResource::collection($users)];
@@ -74,22 +74,22 @@ class UserRepository implements UserRepositoryInterface {
 
     public function update($request)
     {
-        try {      
+        try {
             $data = $request->except(['deleted', 'created_at']);
-           
+
             $user = User::where('uuid', $request->uuid)->first();
             $phone = $user->phones->first();
-            
+
            $user->update($data);
             if ($phone) {
                 $phone->update(['phone' => $data['cell']]);
             } else {
                 $user->phones()->create(['phone' => $data['cell'], 'type' => 'celular']);
             }
-                 
-           
+
+
             return ['status' => true, 'data' => new UserResource($user) , 'message' => 'O Usuário foi editado.'];
-           
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
@@ -99,11 +99,11 @@ class UserRepository implements UserRepositoryInterface {
     public function activate($uuid)
     {
         try {
-            
+
             $user = DB::table('users')->where('uuid', $uuid)->update(['active' => 1]);
-            
-            return ['status' => true, 'message' => 'O Usuário foi ativado.', 'data' => new UserResource($user)];
-           
+
+            return ['status' => true, 'message' => 'O Usuário foi ativado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Usuário não foi ativado.', 'error' => $th->getMessage()];
@@ -113,10 +113,9 @@ class UserRepository implements UserRepositoryInterface {
     public function inactivate($uuid)
     {
         try {
-
             $user = DB::table('users')->where('uuid', $uuid)->update(['active' => false]);
-          
-            return ['status' => true, 'message' => 'O Usuário foi inativado.', 'data' => new UserResource($user)];    
+
+            return ['status' => true, 'message' => 'O Usuário foi inativado.'];
 
         } catch (\Throwable $th) {
 
@@ -127,11 +126,11 @@ class UserRepository implements UserRepositoryInterface {
     public function deleted($uuid)
     {
         try {
-            
+
             $user = DB::table('users')->where('uuid', $uuid)->update(['deleted' => true]);
 
-            return ['status' => true, 'message' => 'O Usuário foi deletado.', 'data' => new UserResource($user)];
-           
+            return ['status' => true, 'message' => 'O Usuário foi deletado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
@@ -144,8 +143,8 @@ class UserRepository implements UserRepositoryInterface {
 
             $user = DB::table('users')->where('uuid', $uuid)->update(['deleted' => false]);
 
-            return ['status' => true, 'message' => 'O Usuário foi Recuperado.', 'data' => new UserResource($user)];
-           
+            return ['status' => true, 'message' => 'O Usuário foi Recuperado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Usuário não foi editado.', 'error' => $th->getMessage()];
@@ -156,10 +155,10 @@ class UserRepository implements UserRepositoryInterface {
     {
         try {
             $user = User::where('uuid', $uuid)->first();
-            
+
             $user->phones()->delete();
-            $user->delete();          
-            
+            $user->delete();
+
             return ['status'=>true, 'message'=> 'O Usuário foi excluído.'];
 
         } catch (\Throwable $th) {

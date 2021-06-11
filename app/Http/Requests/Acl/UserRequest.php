@@ -36,7 +36,7 @@ class UserRequest extends FormRequest
             'name.min' => 'O Nome não pode ser menor que 6 caracteres.',
             'email.required' => 'O Email é obrigatório.',
             'email.unique' => 'Já existe um usuário com este e-mail.',
-            'email.email' => 'O Email é inválido.',
+            'email.email' => 'O Email é inválidu.',
             'password.required' => 'Digite uma Senha.',
             'password.digits_between' => ' A Senha deve ter no mínimo 6 e no máximo 12 caracteres.',
             'cell.required' => 'O Celular é obrigatório.',

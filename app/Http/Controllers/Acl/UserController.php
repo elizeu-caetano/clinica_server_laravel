@@ -40,7 +40,7 @@ class UserController extends Controller
 
     public function update(UserRequest $request)
     {
-       Gate::authorize('update_user');
+        Gate::authorize('update_user');
 
         return $this->repository->update($request);
     }
