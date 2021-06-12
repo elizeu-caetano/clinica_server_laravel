@@ -21,6 +21,7 @@ class UserRepository implements UserRepositoryInterface {
             $search = $request->search;
 
             $users = User::where('deleted', false)
+            ->where('active', $active)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
                 ->orWhere('email', 'LIKE', "%{$search}%");
