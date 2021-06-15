@@ -28,7 +28,7 @@ class ContractorResource extends JsonResource
                         ->where('p.id', '>', 2)->get(),
             'person' => $this->type_person == 'J' ? 'Jurídica' : 'Física',
             'active' => $this->active ? 'Sim' : 'Não',
-            'logo' => $this->logo ? Storage::path(env('AWS_URL').$this->logo) : null,
+            'logo' => $this->logo ? env('AWS_URL').$this->logo : null,
             'deleted' => $this->deleted ? 'Sim' : 'Não',
             'created_at' => Carbon::make($this->created_at)->format('d/m/Y H:i:s')
         ];

@@ -28,18 +28,17 @@ class ContractorRepository implements ContractorRepositoryInterface {
 
     public function search($request)
     {
-       
+
         try {
-                     
             $active = !$request->active ? false : true;
             $search = $request->search;
 
             $contractors = Contractor::where('active', $active)
             ->where('deleted', false)
-            ->orWhere(function ($query) use ($search) {
+            ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
                 ->orWhere('fantasy_name', 'LIKE', "%{$search}%")
-                ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");                
+                ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");
             })->get();
 
             return ['status' => true, 'data' => ContractorResource::collection($contractors)];
@@ -57,9 +56,10 @@ class ContractorRepository implements ContractorRepositoryInterface {
             $data = $request->all();
 
             if ($request->hasFile('logo') && $request->logo->isValid()) {
-                $data['logo'] = $request->file('logo')->storePublicly('logos');
-            }                       
-            
+                // $data['logo'] = Storage::disk('s3')->put('logo',$request->file('logo'));
+                $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
+            }
+
             $data['uuid'] = Str::uuid();
             $contractor = Contractor::create($data);
 
@@ -75,7 +75,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
     {
         try {
             $contractors = Contractor::where('uuid', $uuid)->with('plans')->first();
-            
+
             return ['status' => true, 'data' => new ContractorResource($contractors)];
 
         } catch (\Throwable $th) {
@@ -91,8 +91,8 @@ class ContractorRepository implements ContractorRepositoryInterface {
             $contractor = Contractor::where('uuid', $request->uuid)->first();
             $contractor->update($data);
 
-            return ['status' => true, 'message' => 'O Contratante foi editado.', 'data' => new ContractorResource($contractor)];
-          
+            return ['status' => true, 'message' => 'O Contratante foi editado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Contratante não foi editado.', 'error' => $th->getMessage()];
@@ -102,11 +102,11 @@ class ContractorRepository implements ContractorRepositoryInterface {
     public function activate($uuid)
     {
         try {
-            
-            $contractor = DB::table('contractors')->where('uuid', $uuid)->update(['active' => 1]);
-         
-            return ['status' => true, 'message' => 'O Contratante foi ativado.', 'data' => new ContractorResource($contractor)];
-           
+
+            Contractor::where('uuid', $uuid)->update(['active' => 1]);
+
+            return ['status' => true, 'message' => 'O Contratante foi ativado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Contratante não foi ativado.', 'error' => $th->getMessage()];
@@ -116,27 +116,26 @@ class ContractorRepository implements ContractorRepositoryInterface {
     public function inactivate($uuid)
     {
         try {
-            
-            $contractor = DB::table('contractors')->where('uuid', $uuid)->update(['active' => false]);
-         
-            return ['status' => true, 'message' => 'O Contratante foi inativado.', 'data' => new ContractorResource($contractor)];
-           
+
+            Contractor::where('uuid', $uuid)->update(['active' => false]);
+
+            return ['status' => true, 'message' => 'O Contratante foi inativado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Contratante não foi inativado.', 'error' => $th->getMessage()];
         }
     }
-  
+
     public function destroy($uuid)
     {
         try {
-            $contractor = Contractor::where('uuid', $uuid)->first();
-          
-            $contractor->delete();
+            Contractor::where('uuid', $uuid)->delete();
+
             return ['status'=>true, 'message'=> 'O Contratante foi excluído.'];
 
         } catch (\Throwable $th) {
-            
+
             return ['status'=>false, 'message'=> 'O Contratante não foi excluído', 'error'=> $th->getMessage()];
         }
     }
