@@ -3,6 +3,8 @@
 namespace App\Repositories\Acl;
 
 use App\Http\Resources\Acl\UserResource;
+use App\Mail\AuthMail;
+use App\Mail\UserRegisteredMail;
 use App\Models\Acl\User;
 use App\Models\Acl\PhonesUser;
 use App\Repositories\Acl\Contracts\UserRepositoryInterface;
@@ -10,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Laravel\Passport\Bridge\UserRepository as BridgeUserRepository;
 
 class UserRepository implements UserRepositoryInterface {
 
@@ -50,6 +54,16 @@ class UserRepository implements UserRepositoryInterface {
             $user = User::create($data);
 
             $user->phones()->create($data);
+            $user->password = $senha;
+
+            $toUser = ['name' => $user->name, 'email' => $user->email, 'password' => $senha];
+
+            Mail::send(new AuthMail($user));
+
+            // Mail::send('mail.user-registered', $toUser, function ($message) use($toUser) {
+            //     $message->to($toUser['email'], $toUser['name']);
+            //     $message->subject('Credencias');
+            // });
 
             return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
 
@@ -161,6 +175,17 @@ class UserRepository implements UserRepositoryInterface {
             $user->delete();
 
             return ['status'=>true, 'message'=> 'O Usuário foi excluído.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'O Usuário não foi excluído', 'error'=> $th->getMessage()];
+        }
+    }
+
+    private function registered($user)
+    {
+        try {
+
+            Mail::to($user->email)->send(new UserRegisteredMail($user));
 
         } catch (\Throwable $th) {
             return ['status'=>false, 'message'=> 'O Usuário não foi excluído', 'error'=> $th->getMessage()];

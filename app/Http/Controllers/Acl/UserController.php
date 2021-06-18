@@ -79,4 +79,5 @@ class UserController extends Controller
 
         return $this->repository->destroy($uuid);
     }
+
 }
