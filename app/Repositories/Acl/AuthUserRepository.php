@@ -74,4 +74,39 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
 
     }
 
+    public function emailConfirmation($uuid, $token)
+    {
+        try {
+
+            $user = User::where('uuid', $uuid)->first();
+
+            if ($user) {
+
+                $contractor = $user->contractor;
+
+                if ($user->active And $user->email_verified_at != null) {
+                    return ['status' => true, 'message' => 'O Email já foi ativado em: ' . Carbon::make($user->email_verified_at)->format('d/m/Y H:i:s')];
+                }
+
+                if ($user->token == $token) {
+                    $user->active = true;
+                    $user->token = '';
+                    $user->email_verified_at = now();
+                    $user->save();
+                    return ['status' => true, 'message' => 'O Email foi ativado!'];
+                } else {
+                    return ['status' => false, 'message' => 'O Email não foi ativado. Entre em contato com a ' . strtoupper($contractor->fantasy_name) . ' no telefone ' . $contractor->phone . '.'];
+                }
+            } else{
+                return ['status' => false, 'message' => 'Não foi possível confirmar o email, entre em contato com sua empresa!'];
+            }
+
+
+
+        } catch (\Throwable $th) {
+
+            return ['status' => false, 'message' => 'Não foi possível confirmar o email, entre em contato com sua empresa!', 'error' => $th->getMessage()];
+        }
+    }
+
 }

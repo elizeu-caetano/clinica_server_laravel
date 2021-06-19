@@ -2,24 +2,22 @@
 
 namespace App\Mail;
 
-use App\Models\Acl\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use phpDocumentor\Reflection\Types\This;
 
-class AuthMail extends Mailable
+class UserEmailConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $user;
+    public $user;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct($user)
     {
         $this->user = $user;
     }
@@ -31,11 +29,15 @@ class AuthMail extends Mailable
      */
     public function build()
     {
+        $this->user->link = 'https://2eclinica.com/confirmacao-email/' . $this->user->uuid . '/' . $this->user->token;
+
         $this->subject('Novo Usuário');
         $this->to($this->user->email, $this->user->name);
 
-        return $this->markdown('mail.auth', [
+        return $this->markdown('mail.emailconfirmation', [
             'user' => $this->user
         ]);
+
+
     }
 }

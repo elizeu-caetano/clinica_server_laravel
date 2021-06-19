@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Acl;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\AuthUserRequest;
+use App\Models\Acl\User;
 use App\Repositories\Acl\Contracts\AuthUserRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AuthUserController extends Controller
@@ -12,7 +15,7 @@ class AuthUserController extends Controller
 
     public function __construct(AuthUserRepositoryInterface $repository)
     {
-       $this->repository = $repository;
+        $this->repository = $repository;
     }
 
     public function auth(AuthUserRequest $request)
@@ -20,12 +23,19 @@ class AuthUserController extends Controller
         return $this->repository->auth($request);
     }
 
-    public function authorized(){
+    public function authorized()
+    {
         return $this->repository->authorized();
     }
 
     public function logout(Request $request)
     {
         return $this->repository->logout($request);
+    }
+
+    public function emailConfirmation($uuid, $token)
+    {
+        return $this->repository->emailConfirmation($uuid, $token);
+
     }
 }

@@ -48,3 +48,5 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
 });
 
 Route::post('/auth', [AuthUserController::class, 'auth']);
+Route::get('/auth/user-email-confirmation/{uuid}/{token}', [AuthUserController::class, 'emailConfirmation']);
+

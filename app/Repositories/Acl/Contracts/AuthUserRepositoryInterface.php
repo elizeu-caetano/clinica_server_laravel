@@ -9,5 +9,6 @@ interface AuthUserRepositoryInterface {
     public function authorized();
 
     public function logout($request);
-    
+
+    public function emailConfirmation($uuid, $token);
 }

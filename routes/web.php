@@ -20,24 +20,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/email-test', function () {
-    $email = Mail::send('mail.test', ['curso' => 'Eloquent'], function ($message) {
-        $message->subject('Teste');
-        $message->from('elizeucaetano@outlook.com', 'Elizeu Caetano');
-        $message->to('elizeucaetanos@gmail.com', 'Caetano Silva');
-        $message->cc('elizeu@paxreal.com.br', 'Pax Real');
-    });
-
-    return 'res' .$email;
-});
-
-
-Route::get('send-email', function () {
-    $user = User::find(1);
-    $user->password = "102030";
-
-    //Mail::send(new AuthMail($user));
-
-    return new AuthMail($user);
-});

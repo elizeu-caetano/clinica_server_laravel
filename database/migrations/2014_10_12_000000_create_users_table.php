@@ -15,11 +15,11 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid'); 
+            $table->uuid('uuid');
             $table->string('name');
             $table->string('email');
             $table->string('password');
-            $table->boolean('active')->default(true);
+            $table->boolean('active')->default(false);
             $table->boolean('deleted')->default(false);
             $table->string('photo', 255)->nullable();
             $table->foreignId('contractor_id')->constrained();

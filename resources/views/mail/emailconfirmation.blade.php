@@ -5,11 +5,10 @@
 
 <h4>Sua senha de acesso é: {{ $user->password }}. </h4>
 
-<h4>Por favor, confirme seu email: {{ $user->email }}, para ter acesso ao sistema. </h4>
+<h4>Por favor, click no botão abaixo para confirmar seu email: {{ $user->email }}, para ter acesso ao sistema. </h4>
 
-@component('mail::button', ['url' => 'https://2eclinica.com/login'])
+@component('mail::button', ['url' => $user->link])
 Confirmar
 @endcomponent
-
 
 @endcomponent

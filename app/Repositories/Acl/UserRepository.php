@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Acl;
 
+use App\Events\NewUser;
 use App\Http\Resources\Acl\UserResource;
 use App\Mail\AuthMail;
 use App\Mail\UserRegisteredMail;
@@ -50,14 +51,15 @@ class UserRepository implements UserRepositoryInterface {
             $data['contractor_id'] = Auth::user()->contractor_id;
             $data['phone'] = $request->cell;
             $data['type'] = 'Celular';
+            $data['token'] = Str::random(40);
 
             $user = User::create($data);
-
             $user->phones()->create($data);
+
             $user->password = $senha;
+            event(new NewUser($user));
 
-
-           Mail::send(new AuthMail($user));
+            //Mail::send(new AuthMail($user));
 
             return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
 
