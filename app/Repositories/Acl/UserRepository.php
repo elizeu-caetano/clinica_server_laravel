@@ -56,14 +56,8 @@ class UserRepository implements UserRepositoryInterface {
             $user->phones()->create($data);
             $user->password = $senha;
 
-            $toUser = ['name' => $user->name, 'email' => $user->email, 'password' => $senha];
 
-            Mail::send(new AuthMail($user));
-
-            // Mail::send('mail.user-registered', $toUser, function ($message) use($toUser) {
-            //     $message->to($toUser['email'], $toUser['name']);
-            //     $message->subject('Credencias');
-            // });
+           Mail::send(new AuthMail($user));
 
             return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
 

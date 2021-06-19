@@ -123,8 +123,7 @@ img {
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
     background-color: #fff;
-    border-bottom: 1px solid #edf2f7;
-    border-top: 1px solid #edf2f7;
+
     margin: 0;
     padding: 0;
     width: 100%;
@@ -147,7 +146,7 @@ img {
 /* Subcopy */
 
 .subcopy {
-    border-top: 1px solid #e8e5ef;
+    border-top: 0px solid #e8e5ef;
     margin-top: 25px;
     padding-top: 25px;
 }

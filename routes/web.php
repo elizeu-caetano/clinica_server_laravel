@@ -1,6 +1,8 @@
 <?php
 
 use App\Mail\AuthMail;
+use App\Models\Acl\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -32,12 +34,10 @@ Route::get('/email-test', function () {
 
 
 Route::get('send-email', function () {
-    $user = new stdClass();
-    $user->name = "Elizeu Caetano";
-    $user->email = "elizeucaetanos@gmail.com";
+    $user = User::find(1);
     $user->password = "102030";
 
-    Mail::send(new AuthMail($user));
+    //Mail::send(new AuthMail($user));
 
-    //return new AuthMail($user);
+    return new AuthMail($user);
 });

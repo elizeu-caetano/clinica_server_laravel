@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use phpDocumentor\Reflection\Types\This;
-use stdClass;
 
 class AuthMail extends Mailable
 {
