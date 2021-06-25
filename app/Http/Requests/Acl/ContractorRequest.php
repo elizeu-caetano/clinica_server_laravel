@@ -19,9 +19,11 @@ class ContractorRequest extends FormRequest
         $roles = [
             'name' => ['required','min:6'],
             'fantasy_name' => ['required'],
+            'phone' => ['required', 'celular_com_ddd'],
+            'email' => ['required', 'email'],
+            'fantasy_name' => ['required'],
             'type_person' => ['required', Rule::in(['F', 'J'])],
             "cpf_cnpj" => [Rule::unique('contractors')->ignore($this->id), 'required', "{$this->cpf_cnpj}"],
-            // "logo" => ['image']
         ];
 
         if ($this->method() == 'PUT') {
@@ -40,10 +42,14 @@ class ContractorRequest extends FormRequest
             'name.required' => 'O Nome é obrigatório.',
             'name.min' => 'O Nome não pode ser menor que 6 caracteres.',
             'fantasy_name.required' => 'O Nome Fantasia é obrigatório.',
+            'phone.required' => 'O Telefone é obrigatório.',
+            'phone.celular_com_ddd' => 'O Telefone é inválido.',
+            'email.required' => 'O Email é obrigatório.',
+            'email.email' => 'O Email é inválido.',
             "cpf_cnpj.{$this->cpf_cnpj}" => 'O ' .  Str::upper($this->cpf_cnpj) . ' é inválido.',
             "cpf_cnpj.required" => 'O ' .  Str::upper($this->cpf_cnpj) . ' é Obrigatório.',
             "cpf_cnpj.unique" => 'Este ' . Str::upper($this->cpf_cnpj) . ' já foi cadastrado.',
-         //   "logo.image" => 'Selecione uma imágem válida.',
+            // "logo.image" => 'Selecione uma imágem válida.',
             "type_person.required" => 'Selecione um tipo de pessoa.',
             "type_person.in" => 'Tipo de pessoa inválido.'
         ];

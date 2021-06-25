@@ -45,7 +45,6 @@ class UserRepository implements UserRepositoryInterface {
         try {
             $data = $request->all();
             $senha = rand(111111, 999999);
-            $data['logo'] = $senha;
             $data['password'] = Hash::make($senha);
             $data['uuid'] = Str::uuid();
             $data['contractor_id'] = Auth::user()->contractor_id;
@@ -58,8 +57,6 @@ class UserRepository implements UserRepositoryInterface {
 
             $user->password = $senha;
             event(new NewUser($user));
-
-            //Mail::send(new AuthMail($user));
 
             return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
 

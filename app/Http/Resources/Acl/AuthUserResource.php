@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Acl;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Storage;
+use Illuminate\Support\Str;
 
 class AuthUserResource extends JsonResource
 {
@@ -16,9 +16,9 @@ class AuthUserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'name' => $this->name,
-            'first_name' => explode(' ', $this->name)[0],
-            'contractor' => $this->contractor->fantasy_name,
+            'name' =>  Str::title($this->name),
+            'first_name' =>  Str::title(explode(' ', $this->name)[0]),
+            'contractor' => Str::title($this->contractor->fantasy_name),
             'token' => $this->token,
             'logo' => $this->contractor->logo ? env('AWS_URL').$this->contractor->logo : null,
             'photo' => $this->photo ? env('AWS_URL').$this->photo : null,

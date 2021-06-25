@@ -3,12 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\NewUser;
-use App\Mail\UserEmailConfirmation;
+use App\Mail\NewUserPasswordMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
-class EmailConfirmation
+class NewUserPassword
 {
     /**
      * Create the event listener.
@@ -29,6 +29,6 @@ class EmailConfirmation
     public function handle(NewUser $event)
     {
         Mail::to($event->user)
-            ->send(new UserEmailConfirmation($event->user));
+            ->send(new NewUserPasswordMail($event->user));
     }
 }
