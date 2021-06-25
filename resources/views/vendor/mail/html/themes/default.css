@@ -116,6 +116,11 @@ img {
     max-width: 200px;
 }
 
+.logo-signature {
+    max-height: 50px;
+    max-width: 100px;
+}
+
 /* Body */
 
 .body {
@@ -160,17 +165,27 @@ img {
 .footer {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
-    -premailer-width: 570px;
     background-color: #fff;
     margin: 0 auto;
-    padding: 0;
+    padding: 10px;
     text-align: center;
-    width: 570px;
 }
 
 .footer p {
     color: #b0adc5;
     font-size: 12px;
+    text-align: center;
+}
+
+.footer h2 {
+    color: #b0adc5;
+    text-align: center;
+    margin-top: 5px !important;
+    margin-bottom: -10px !important;
+}
+
+.footer h3 {
+    color: #b0adc5;
     text-align: center;
 }
 

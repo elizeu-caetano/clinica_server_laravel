@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Http\Resources\Acl\ContractorResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -31,12 +32,15 @@ class UserEmailConfirmation extends Mailable
     {
         $this->user->link = 'https://2eclinica.com/confirmacao-email/' . $this->user->uuid . '/' . $this->user->token;
 
+        $contractor = new ContractorResource($this->user->contractor);
+
         $this->subject('Novo Usuário');
         $this->to($this->user->email, $this->user->name);
-        $this->from('elizeucaetano@outlook.com', $this->user->contractor->fantasy_name);
+        $this->from('elizeucaetano@outlook.com', $contractor->fantasy_name);
 
         return $this->markdown('mail.emailconfirmation', [
-            'user' => $this->user
+            'user' => $this->user,
+            'contractor' => $contractor
         ]);
     }
 }

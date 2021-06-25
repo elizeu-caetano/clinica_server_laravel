@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('password');
-            $table->boolean('active')->default(false);
+            $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
             $table->string('photo', 255)->nullable();
             $table->foreignId('contractor_id')->constrained();

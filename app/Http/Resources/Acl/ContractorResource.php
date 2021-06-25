@@ -5,7 +5,7 @@ namespace App\Http\Resources\Acl;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ContractorResource extends JsonResource
 {
@@ -20,8 +20,9 @@ class ContractorResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'fantasy_name' => $this->fantasy_name,
+            'fantasy_name' => Str::title($this->fantasy_name),
             'cpf_cnpj' => $this->cpf_cnpj,
+            'phone' => $this->phone,
             'type_person' => $this->type_person,
             'plan_id' => DB::table('contractor_plan as cp')->join('plans as p', 'p.id', '=', 'cp.plan_id')
                         ->select('p.id as plan_id', 'p.name')->where('cp.contractor_id', $this->id)
