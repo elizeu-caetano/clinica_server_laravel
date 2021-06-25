@@ -33,11 +33,10 @@ class UserEmailConfirmation extends Mailable
 
         $this->subject('Novo Usuário');
         $this->to($this->user->email, $this->user->name);
+        $this->from('elizeucaetano@outlook.com', $this->user->contractor->fantasy_name);
 
         return $this->markdown('mail.emailconfirmation', [
             'user' => $this->user
         ]);
-
-
     }
 }
