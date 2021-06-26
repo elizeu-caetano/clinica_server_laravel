@@ -18,11 +18,13 @@ class ContractorResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
             'fantasy_name' => Str::title($this->fantasy_name),
             'cpf_cnpj' => $this->cpf_cnpj,
             'phone' => $this->phone,
+            'email' => $this->email,
             'type_person' => $this->type_person,
             'plan_id' => DB::table('contractor_plan as cp')->join('plans as p', 'p.id', '=', 'cp.plan_id')
                         ->select('p.id as plan_id', 'p.name')->where('cp.contractor_id', $this->id)

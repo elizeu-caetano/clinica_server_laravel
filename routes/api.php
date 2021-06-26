@@ -17,6 +17,7 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthUserController::class, 'logout']);
 
     Route::post('contractors/search', [ContractorController::class, 'search']);
+    Route::post('contractors/update', [ContractorController::class, 'update']);
     Route::put('contractors/activate/{uuid}', [ContractorController::class, 'activate']);
     Route::put('contractors/inactivate/{uuid}', [ContractorController::class, 'inactivate']);
     Route::put('contractors/deleted/{uuid}', [ContractorController::class, 'deleted']);

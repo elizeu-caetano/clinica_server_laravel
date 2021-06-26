@@ -56,7 +56,6 @@ class ContractorRepository implements ContractorRepositoryInterface {
             $data = $request->all();
 
             if ($request->hasFile('logo') && $request->logo->isValid()) {
-                // $data['logo'] = Storage::disk('s3')->put('logo',$request->file('logo'));
                 $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
             }
 
@@ -87,8 +86,16 @@ class ContractorRepository implements ContractorRepositoryInterface {
     public function update($request)
     {
         try {
-            $data = $request->except(['plan_id', 'person', 'active', 'deleted', 'created_at', 'logo']);
+
+            $data = $request->except(['plan_id', 'person', 'active', 'deleted', 'created_at']);
+
             $contractor = Contractor::where('uuid', $request->uuid)->first();
+
+            if ($request->hasFile('logo') && $request->logo->isValid()) {
+                Storage::disk('s3')->delete($contractor->logo);
+                $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
+            }
+
             $contractor->update($data);
 
             return ['status' => true, 'message' => 'O Contratante foi editado.'];
@@ -130,7 +137,13 @@ class ContractorRepository implements ContractorRepositoryInterface {
     public function destroy($uuid)
     {
         try {
-            Contractor::where('uuid', $uuid)->delete();
+            $contractor = Contractor::where('uuid', $uuid)->first();
+
+            if ($contractor->logo != '') {
+                Storage::disk('s3')->delete($contractor->logo);
+            }
+
+            $contractor->delete();
 
             return ['status'=>true, 'message'=> 'O Contratante foi excluído.'];
 

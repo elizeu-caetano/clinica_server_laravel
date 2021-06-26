@@ -18,14 +18,14 @@ class ContractorController extends Controller
     }
 
     public function index()
-    {   
+    {
         Gate::authorize('store_contractor');
 
         return $this->repository->index();
     }
 
     public function search(Request $request)
-    {   
+    {
         Gate::authorize('search_contractor');
 
         return $this->repository->search($request);
@@ -66,7 +66,7 @@ class ContractorController extends Controller
 
         return $this->repository->inactivate($uuid);
     }
-    
+
     public function destroy($uuid)
     {
         Gate::authorize('destroy_contractor');

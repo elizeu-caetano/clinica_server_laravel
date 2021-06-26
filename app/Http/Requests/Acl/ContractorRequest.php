@@ -26,12 +26,6 @@ class ContractorRequest extends FormRequest
             "cpf_cnpj" => [Rule::unique('contractors')->ignore($this->id), 'required', "{$this->cpf_cnpj}"],
         ];
 
-        if ($this->method() == 'PUT') {
-            $roles = [
-               //'cpf_cnpj' => ['required', "{$this->cpf_cnpj}"]
-            ];
-        }
-
         return $roles;
 
     }
