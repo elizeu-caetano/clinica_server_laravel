@@ -13,14 +13,14 @@ class PlanRepository implements PlanRepositoryInterface {
     public function search($request)
     {
         try {
-            
+
             $active = !$request->active ? false : true;
             $search = $request->search;
 
             $plans = Plan::where('active', $active)
-            ->orWhere(function ($query) use ($search) {
+            ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('price', 'LIKE', "%{$search}%");                
+                ->orWhere('price', 'LIKE', "%{$search}%");
             })->get();
 
             return ['status' => true, 'data' => PlanResource::collection($plans)];
@@ -64,15 +64,15 @@ class PlanRepository implements PlanRepositoryInterface {
 
     public function update($request)
     {
-        try {      
+        try {
 
             $data = $request->except(['active', 'created_at']);
-           
+
             $plan = Plan::where('uuid', $request->uuid)->first();
             $plan->update($data);
 
             return ['status' => true, 'data' => new PlanResource($plan), 'message' => 'O Plano foi editado.'];
-           
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Plano não foi editado.', 'error' => $th->getMessage()];
@@ -82,11 +82,11 @@ class PlanRepository implements PlanRepositoryInterface {
     public function activate($uuid)
     {
         try {
-            
-            $plan = DB::table('plans')->where('uuid', $uuid)->update(['active' => 1]);
 
-            return ['status' => true, 'message' => 'O Plano foi ativado.', 'data' => new PlanResource($plan)];
-          
+            Plan::where('uuid', $uuid)->update(['active' => 1]);
+
+            return ['status' => true, 'message' => 'O Plano foi ativado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Plano não foi ativado.', 'error' => $th->getMessage()];
@@ -97,27 +97,25 @@ class PlanRepository implements PlanRepositoryInterface {
     {
         try {
 
-            $plan = DB::table('plans')->where('uuid', $uuid)->update(['active' => false]);
+            Plan::where('uuid', $uuid)->update(['active' => false]);
 
-            return ['status' => true, 'message' => 'O Plano foi inativado.', 'data' => new PlanResource($plan)];         
+            return ['status' => true, 'message' => 'O Plano foi inativado.'];
 
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Plano não foi inativado.', 'error' => $th->getMessage()];
         }
     }
-    
+
     public function destroy($uuid)
     {
         try {
-            $plan = Plan::where('uuid', $uuid)->first();
-          
-            $plan->delete();
-            
+            Plan::where('uuid', $uuid)->delete();
+
             return ['status'=>true, 'message'=> 'O Plano foi excluído.'];
 
         } catch (\Throwable $th) {
-            
+
             return ['status'=>false, 'message'=> 'O Plano não foi excluído', 'error'=> $th->getMessage()];
         }
     }
