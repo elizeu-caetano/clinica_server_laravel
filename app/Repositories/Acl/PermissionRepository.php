@@ -14,12 +14,12 @@ class PermissionRepository implements PermissionRepositoryInterface {
     public function search($request)
     {
         try {
-            
+
             $search = $request->search;
 
             $permissions = Permission::where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('permission', 'LIKE', "%{$search}%");                
+                ->orWhere('permission', 'LIKE', "%{$search}%");
             })->get();
 
             return ['status' => true, 'data' => PermissionResource::collection($permissions)];
@@ -32,27 +32,18 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
     public function store($request)
     {
-        
-        try {
-                     
-            $idPermissao = [];
-            $permissions = $this->createData($request->listPermission);
 
-            for ($i=0; $i < count($permissions); $i++) { 
-            
-                foreach ($permissions[$i] as $key => $value) {
-                    $data['name'] = $value . ' ' . $request->name;
-                    $data['permission'] = $key . '_' . $request->permission;
-                }
+        try {
+
+            if ($request->lote) {
+                $permission = $this->storeBatch($request);
+            } else {
+                $data['name'] = $request->name;
+                $data['permission'] = $request->permission;
+
                 $permission = Permission::create($data);
-                array_push($idPermissao, $permission->id);
             }
-            
-            if ($request->plan) {
-                $plan = Plan::find($request->plan);
-                $plan->permissions()->attach($idPermissao);
-            }
-          
+
             return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
         } catch (\Throwable $th) {
@@ -61,29 +52,48 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
 
+    private function storeBatch($request)
+    {
+        $idPermissao = [];
+
+        $permissions = $this->createData($request->listPermission);
+
+        for ($i=0; $i < count($permissions); $i++) {
+
+            foreach ($permissions[$i] as $key => $value) {
+                $data['name'] = $value . ' ' . $request->name;
+                $data['permission'] = $key . '_' . $request->permission;
+            }
+            $permission = Permission::create($data);
+            array_push($idPermissao, $permission->id);
+        }
+
+        return $permission;
+    }
+
     private function createData($permissions)
     {
         $permission = [];
         foreach ($permissions as $value) {
-            if ($value == 'search') {
+            if ($value['description'] == 'Listar') {
                 array_push($permission, ['search' => 'Listar']);
-            } else if ($value == 'store') {
+            } else if ($value['description'] == 'Cadastrar') {
                 array_push($permission, ['store' => 'Cadastrar']);
-            } else if ($value == 'show') {
+            } else if ($value['description'] == 'Visualizar') {
                 array_push($permission, ['show' => 'Visualizar']);
-            } else if ($value == 'update') {
+            } else if ($value['description'] == 'Editar') {
                 array_push($permission, ['update' => 'Editar']);
-            } else if ($value == 'activate') {
+            } else if ($value['description'] == 'Ativar') {
                 array_push($permission, ['activate' => 'Ativar']);
-            } else if ($value == 'inactivate') {
+            } else if ($value['description'] == 'Inativar') {
                 array_push($permission, ['inactivate' => 'Inativar']);
-            } else if ($value == 'destroy') {
+            } else if ($value['description'] == 'Excluir') {
                 array_push($permission, ['destroy' => 'Excluir']);
-            } else if ($value == 'deleted') {
+            } else if ($value['description'] == 'Apagar') {
                 array_push($permission, ['deleted' => 'Apagar']);
-            } else if ($value == 'recover') {
+            } else if ($value['description'] == 'Recuperar') {
                 array_push($permission, ['recover' => 'Recuperar']);
-            }     
+            }
         }
 
         return $permission;
@@ -105,33 +115,31 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
     public function update($request)
     {
-        try {      
+        try {
 
             $data = $request->except(['created_at']);
-           
+
             $permission = Permission::find($request->id);
             $permission->update($data);
-        
+
             return ['status' => true, 'message' => 'A Permissão foi editada.', 'data' => new PermissionResource($permission)];
-           
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'A Permissão não foi editada.', 'error' => $th->getMessage()];
         }
     }
-    
+
     public function destroy($id)
     {
         try {
-            $permission = Permission::find($id);
-          
-            $permission->delete();
-            
-            return ['status'=>true, 'message'=> 'A Permissão foi excluída.'];
+            Permission::find($id)->delete();
+
+            return ['status'=> true, 'message'=> 'A Permissão foi excluída.'];
 
         } catch (\Throwable $th) {
-            
-            return ['status'=>false, 'message'=> 'A Permissão não foi excluído', 'error'=> $th->getMessage()];
+
+            return ['status'=> false, 'message'=> 'A Permissão não foi excluído', 'error'=> $th->getMessage()];
         }
     }
 }

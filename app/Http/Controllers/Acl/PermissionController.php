@@ -12,44 +12,44 @@ class PermissionController extends Controller
 {
     private $repository;
 
-    public function __construct(PermissionRepositoryInterface $repository, Request $request)
+    public function __construct(PermissionRepositoryInterface $repository)
     {
        $this->repository = $repository;
     }
 
     public function search(Request $request)
     {
-        // Gate::authorize($this->permission);
-        
+        Gate::authorize('search_permission');
+
         return $this->repository->search($request);
     }
 
     public function store(PermissionRequest $request)
     {
-        // Gate::authorize($this->permission);
-        
+        Gate::authorize('store_permission');
+
         return $this->repository->store($request);
     }
 
     public function show($id)
     {
-        // Gate::authorize($this->permission);
-        
+        Gate::authorize('show_permission');
+
         return $this->repository->show($id);
     }
 
 
     public function update(PermissionRequest $request)
     {
-        // Gate::authorize($this->permission);
-        
+        Gate::authorize('update_permission');
+
         return $this->repository->update($request);
     }
-    
+
     public function destroy($id)
     {
-        // Gate::authorize($this->permission);
-        
+        Gate::authorize('destroy_permission');
+
         return $this->repository->destroy($id);
     }
 }
