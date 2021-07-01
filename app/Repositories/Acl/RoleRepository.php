@@ -14,14 +14,15 @@ class RoleRepository implements RoleRepositoryInterface {
     public function search($request)
     {
         try {
-            
+
             $active = !$request->active ? false : true;
             $search = $request->search;
 
-            $roles = Role::where('deleted', false)
+            $roles = Role::where('active', $active)
+            ->where('deleted', false)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('description', 'LIKE', "%{$search}%");                
+                ->orWhere('description', 'LIKE', "%{$search}%");
             })->get();
 
             return ['status' => true, 'data' => RoleResource::collection($roles)];
@@ -66,13 +67,13 @@ class RoleRepository implements RoleRepositoryInterface {
 
     public function update($request)
     {
-        try {      
+        try {
 
             $data = $request->except(['admin', 'active', 'deleted', 'created_at']);
-           
+
             $role = Role::where('uuid', $request->uuid)->first();
             $role->update($data);
-           
+
             return ['status' => true, 'data' => new RoleResource($role), 'message' => 'O Papel foi editado.'];
 
         } catch (\Throwable $th) {
@@ -84,11 +85,11 @@ class RoleRepository implements RoleRepositoryInterface {
     public function activate($uuid)
     {
         try {
-            
+
             $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => 1]);
-          
-            return ['status' => true, 'message' => 'O Papel foi ativado.', 'data' => new RoleResource($role)];
-           
+
+            return ['status' => true, 'message' => 'O Papel foi ativado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi ativado.', 'error' => $th->getMessage()];
@@ -100,9 +101,9 @@ class RoleRepository implements RoleRepositoryInterface {
         try {
 
             $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => false]);
-           
-            return ['status' => true, 'message' => 'O Papel foi inativado.', 'data' => new RoleResource($role)];
-            
+
+            return ['status' => true, 'message' => 'O Papel foi inativado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi inativado.', 'error' => $th->getMessage()];
@@ -112,11 +113,11 @@ class RoleRepository implements RoleRepositoryInterface {
     public function deleted($uuid)
     {
         try {
-            
+
             $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => true]);
-          
-            return ['status' => true, 'message' => 'O Papel foi deletado.', 'data' => new RoleResource($role)];
-          
+
+            return ['status' => true, 'message' => 'O Papel foi deletado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi deletado.', 'error' => $th->getMessage()];
@@ -128,9 +129,9 @@ class RoleRepository implements RoleRepositoryInterface {
         try {
 
             $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => false]);
-          
-            return ['status' => true, 'message' => 'O Papel foi recuperado.', 'data' => new RoleResource($role)];
-            
+
+            return ['status' => true, 'message' => 'O Papel foi recuperado.'];
+
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi recuperado.', 'error' => $th->getMessage()];
@@ -141,9 +142,9 @@ class RoleRepository implements RoleRepositoryInterface {
     {
         try {
             $role = Role::where('uuid', $uuid)->first();
-          
+
             $role->delete();
-            
+
             return ['status'=>true, 'message'=> 'O Papel foi excluído.'];
 
         } catch (\Throwable $th) {
