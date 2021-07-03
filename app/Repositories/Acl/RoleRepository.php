@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Acl;
 
+use App\Http\Resources\Acl\PermissionResource;
 use App\Http\Resources\Acl\RoleResource;
+use App\Models\Acl\Permission;
 use App\Models\Acl\Role;
 use App\Repositories\Acl\Contracts\RoleRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -150,5 +152,60 @@ class RoleRepository implements RoleRepositoryInterface {
         } catch (\Throwable $th) {
             return ['status'=>false, 'message'=> 'O Papel não foi excluído', 'error'=> $th->getMessage()];
         }
+    }
+
+    public function rolePermissions($uuid)
+    {
+        try {
+            $role = Role::where('uuid', $uuid)->first();
+            $rolesId = $role->permissions()->pluck('id');
+
+            $permissionsRole = $role->permissions()->get();
+
+            if (Auth::user()->isSuperAdmin()) {
+                $notPermissionsRole = Permission::whereNotIn('id', $rolesId)->get();
+            }
+
+            return ['status'=>true, 'permissionsRole'=> $permissionsRole, 'notPermissionsRole' => $notPermissionsRole];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Não foi possível carregar as permissões', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function attachPermissions($request)
+    {
+        try {
+            $role = Role::where('uuid', $request->uuid)->first();
+            $rolesId = $role->permissions()->pluck('id');
+
+            $role->permissions()->attach($request->permissions);
+
+            $permissionsRole = $role->permissions()->get();
+            if (Auth::user()->isSuperAdmin()) {
+                $notPermissionsRole = Permission::whereNotIn('id', $rolesId)->get();
+            }
+
+            return ['status'=>true, 'message'=> 'Permissões adicionadas.', 'permissionsRole'=> PermissionResource::collection($permissionsRole), 'notPermissionsRole' => PermissionResource::collection($notPermissionsRole)];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As permissões não foi adicionadas.', 'error'=> $th->getMessage()];
+        }
+
+    }
+
+    public function detachPermissions($request)
+    {
+        try {
+            $role = Role::where('uuid', $request->uuid)->first();
+
+            $role->permissions()->detach($request->permissions);
+
+            return ['status'=>true, 'message'=> 'Permissões excluidas.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As Permissões não foi excluidas.', 'error'=> $th->getMessage()];
+        }
+
     }
 }

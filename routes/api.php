@@ -37,6 +37,9 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::put('roles/inactivate/{uuid}', [RoleController::class, 'inactivate']);
     Route::put('roles/deleted/{uuid}', [RoleController::class, 'deleted']);
     Route::put('roles/recover/{uuid}', [RoleController::class, 'recover']);
+    Route::get('roles/role-permissions/{uuid}', [RoleController::class, 'rolePermissions']);
+    Route::post('roles/role-permissions/attach', [RoleController::class, 'attachPermissions']);
+    Route::post('roles/role-permissions/detach', [RoleController::class, 'detachPermissions']);
     Route::apiResource('roles', RoleController::class);
 
     Route::any('users/search', [UserController::class, 'search']);

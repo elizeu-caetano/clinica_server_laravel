@@ -9,7 +9,7 @@ interface RoleRepositoryInterface {
     public function store($request);
 
     public function show($uuid);
-    
+
     public function update($request);
 
     public function activate($uuid);
@@ -21,5 +21,11 @@ interface RoleRepositoryInterface {
     public function recover($uuid);
 
     public function destroy($uuid);
-    
+
+    public function rolePermissions($uuid);
+
+    public function attachPermissions($request);
+
+    public function detachPermissions($request);
+
 }

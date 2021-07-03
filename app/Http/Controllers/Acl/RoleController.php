@@ -17,66 +17,81 @@ class RoleController extends Controller
     }
 
     public function search(Request $request)
-    {   
+    {
         Gate::authorize('search_role');
 
         return $this->repository->search($request);
     }
 
     public function store(RoleRequest $request)
-    {   
+    {
         Gate::authorize('store_role');
 
         return $this->repository->store($request);
     }
 
-    public function show($id)
-    {   
+    public function show($uuid)
+    {
         Gate::authorize('show_role');
 
-        return $this->repository->show($id);
+        return $this->repository->show($uuid);
     }
 
 
     public function update(RoleRequest $request)
-    {   
+    {
         Gate::authorize('update_role');
 
         return $this->repository->update($request);
     }
 
-    public function activate($id)
-    {   
+    public function activate($uuid)
+    {
         Gate::authorize('activate_role');
 
-        return $this->repository->activate($id);
+        return $this->repository->activate($uuid);
     }
 
-    public function inactivate($id)
-    {   
+    public function inactivate($uuid)
+    {
         Gate::authorize('inactivate_role');
 
-        return $this->repository->inactivate($id);
+        return $this->repository->inactivate($uuid);
     }
 
-    public function deleted($id)
-    {   
+    public function deleted($uuid)
+    {
         Gate::authorize('deleted_role');
 
-        return $this->repository->deleted($id);
+        return $this->repository->deleted($uuid);
     }
 
-    public function recover($id)
-    {   
+    public function recover($uuid)
+    {
         Gate::authorize('recover_role');
 
-        return $this->repository->recover($id);
+        return $this->repository->recover($uuid);
     }
-    
-    public function destroy($id)
-    {   
+
+    public function destroy($uuid)
+    {
         Gate::authorize('destroy_role');
 
-        return $this->repository->destroy($id);
+        return $this->repository->destroy($uuid);
+    }
+
+    public function rolePermissions($uuid)
+    {
+        return $this->repository->rolePermissions($uuid);
+    }
+
+    public function attachPermissions(Request $request)
+    {
+        return $this->repository->attachPermissions($request);
+    }
+
+    public function detachPermissions(Request $request)
+    {
+        return $this->repository->detachPermissions($request);
     }
 }
