@@ -2,7 +2,6 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Acl\Permission;
 use Illuminate\Support\Facades\DB;
 
 trait UserAclTrait {
@@ -10,7 +9,7 @@ trait UserAclTrait {
     public function permissions()
     {
         if ($this->isSuperAdmin()) {
-           return Permission::pluck('permission')->toArray();
+           return  DB::table('permissions')->pluck('permission')->toArray();
         } else if ($this->isAdmin()) {
             return $this->permissionsPlan();
         } else {
@@ -18,9 +17,9 @@ trait UserAclTrait {
         }
 
     }
-        
+
     public function hasPermission(string $permission): bool
-    {  
+    {
         return in_array($permission, $this->permissions());
     }
 
@@ -36,7 +35,7 @@ trait UserAclTrait {
 
 
     public function isSuperAdmin(): bool
-    {        
+    {
         return in_array($this->email, config('Acl.superAdmin'));
     }
 

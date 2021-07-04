@@ -26,12 +26,12 @@ class UserResource extends JsonResource
             'cell' => $this->getCell($this->phones),
             'created_at' => Carbon::make($this->created_at)->format('d/m/Y H:i:s'),
         ];
-       
+
     }
 
     private function getCell($phones){
-        foreach ($phones as $key => $value) {
+        foreach ($phones as $value) {
            return $value->phone;
-        } 
+        }
     }
 }

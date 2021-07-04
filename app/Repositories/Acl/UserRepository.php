@@ -48,7 +48,7 @@ class UserRepository implements UserRepositoryInterface {
             $data['password'] = Hash::make($senha);
             $data['uuid'] = Str::uuid();
             $data['contractor_id'] = Auth::user()->contractor_id;
-            $data['phone'] = $request->cell;
+            $data['phone'] = $data->cell;
             $data['type'] = 'Celular';
             $data['token'] = Str::random(40);
 
@@ -174,14 +174,4 @@ class UserRepository implements UserRepositoryInterface {
         }
     }
 
-    private function registered($user)
-    {
-        try {
-
-            Mail::to($user->email)->send(new UserRegisteredMail($user));
-
-        } catch (\Throwable $th) {
-            return ['status'=>false, 'message'=> 'O Usuário não foi excluído', 'error'=> $th->getMessage()];
-        }
-    }
 }
