@@ -3,8 +3,10 @@
 namespace App\Repositories\Acl;
 
 use App\Http\Resources\Acl\PlanResource;
+use App\Models\Acl\Permission;
 use App\Models\Acl\Plan;
 use App\Repositories\Acl\Contracts\PlanRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -118,5 +120,54 @@ class PlanRepository implements PlanRepositoryInterface {
 
             return ['status'=>false, 'message'=> 'O Plano não foi excluído', 'error'=> $th->getMessage()];
         }
+    }
+
+    public function planPermissions($uuid)
+    {
+        try {
+            $plan = Plan::where('uuid', $uuid)->first();
+            $plansId = $plan->permissions()->pluck('id');
+
+            $permissionsPlan = $plan->permissions()->get();
+
+            if (Auth::user()->isSuperAdmin()) {
+                $notPermissionsPlan = Permission::whereNotIn('id', $plansId)->get();
+            }
+
+            return ['status'=>true, 'permissionsPlan'=> $permissionsPlan, 'notPermissionsPlan' => $notPermissionsPlan];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Não foi possível carregar as permissões', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function attachPermissions($request)
+    {
+        try {
+            $plan = Plan::where('uuid', $request->uuid)->first();
+
+            $plan->permissions()->attach($request->permissions);
+
+            return ['status'=>true, 'message'=> 'Permissões adicionadas.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As permissões não foi adicionadas.', 'error'=> $th->getMessage()];
+        }
+
+    }
+
+    public function detachPermissions($request)
+    {
+        try {
+            $plan = Plan::where('uuid', $request->uuid)->first();
+
+            $plan->permissions()->detach($request->permissions);
+
+            return ['status'=>true, 'message'=> 'Permissões excluidas.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As Permissões não foi excluidas.', 'error'=> $th->getMessage()];
+        }
+
     }
 }

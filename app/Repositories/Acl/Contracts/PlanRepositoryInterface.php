@@ -9,7 +9,7 @@ interface PlanRepositoryInterface {
     public function store($request);
 
     public function show($uuid);
-    
+
     public function update($request);
 
     public function activate($uuid);
@@ -18,5 +18,9 @@ interface PlanRepositoryInterface {
 
     public function destroy($uuid);
 
-    
+    public function planPermissions($uuid);
+
+    public function attachPermissions($request);
+
+    public function detachPermissions($request);
 }

@@ -14,7 +14,7 @@ class PlanController extends Controller
 
     public function __construct(PlanRepositoryInterface $repository, Request $request)
     {
-       $this->repository = $repository;      
+       $this->repository = $repository;
     }
 
     public function search(Request $request)
@@ -58,12 +58,27 @@ class PlanController extends Controller
        Gate::authorize('inactivate_plan');
 
         return $this->repository->inactivate($id);
-    }    
-    
+    }
+
     public function destroy($id)
     {
        Gate::authorize('destroy_plan');
 
         return $this->repository->destroy($id);
+    }
+
+    public function planPermissions($uuid)
+    {
+        return $this->repository->planPermissions($uuid);
+    }
+
+    public function attachPermissions(Request $request)
+    {
+        return $this->repository->attachPermissions($request);
+    }
+
+    public function detachPermissions(Request $request)
+    {
+        return $this->repository->detachPermissions($request);
     }
 }

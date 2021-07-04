@@ -30,6 +30,9 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::any('plans/search', [PlanController::class, 'search']);
     Route::put('plans/activate/{uuid}', [PlanController::class, 'activate']);
     Route::put('plans/inactivate/{uuid}', [PlanController::class, 'inactivate']);
+    Route::get('plans/plan-permissions/{uuid}', [PlanController::class, 'planPermissions']);
+    Route::post('plans/plan-permissions/attach', [PlanController::class, 'attachPermissions']);
+    Route::post('plans/plan-permissions/detach', [PlanController::class, 'detachPermissions']);
     Route::apiResource('plans', PlanController::class);
 
     Route::any('roles/search', [RoleController::class, 'search']);
