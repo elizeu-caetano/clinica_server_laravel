@@ -22,6 +22,9 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::put('contractors/inactivate/{uuid}', [ContractorController::class, 'inactivate']);
     Route::put('contractors/deleted/{uuid}', [ContractorController::class, 'deleted']);
     Route::put('contractors/recover/{uuid}', [ContractorController::class, 'recover']);
+    Route::get('contractors/contractor-plans/{uuid}', [ContractorController::class, 'contractorPlans']);
+    Route::post('contractors/contractor-plans/attach', [ContractorController::class, 'attachPlans']);
+    Route::post('contractors/contractor-plans/detach', [ContractorController::class, 'detachPlans']);
     Route::apiResource('contractors', ContractorController::class);
 
     Route::any('permissions/search', [PermissionController::class, 'search']);

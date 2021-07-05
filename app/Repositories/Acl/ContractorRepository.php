@@ -3,7 +3,9 @@
 namespace App\Repositories\Acl;
 
 use App\Http\Resources\Acl\ContractorResource;
+use App\Http\Resources\Acl\PlanResource;
 use App\Models\Acl\Contractor;
+use App\Models\Acl\Plan;
 use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -92,7 +94,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
             $contractor = Contractor::where('uuid', $request->uuid)->first();
 
             if ($request->hasFile('logo') && $request->logo->isValid()) {
-                Storage::disk('s3')->delete($contractor->logo);
+               // Storage::disk('s3')->delete($contractor->logo);
                 $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
             }
 
@@ -151,5 +153,52 @@ class ContractorRepository implements ContractorRepositoryInterface {
 
             return ['status'=>false, 'message'=> 'O Contratante não foi excluído', 'error'=> $th->getMessage()];
         }
+    }
+
+    public function contractorPlans($uuid)
+    {
+        try {
+            $contractor = Contractor::where('uuid', $uuid)->first();
+            $contractorsId = $contractor->plans()->pluck('id');
+
+            $plansContractor = $contractor->plans()->get();
+
+            $notPlansContractor = Plan::whereNotIn('id', $contractorsId)->get();
+
+            return ['status'=>true, 'plansContractor'=> PlanResource::collection($plansContractor), 'notPlansContractor' => PlanResource::collection($notPlansContractor)];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Não foi possível carregar os planos', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function attachPlans($request)
+    {
+        try {
+            $contractor = Contractor::where('uuid', $request->uuid)->first();
+
+            $contractor->plans()->attach($request->plans);
+
+            return ['status'=>true, 'message'=> 'Planos adicionados.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Os planos não foram adicionados.', 'error'=> $th->getMessage()];
+        }
+
+    }
+
+    public function detachPlans($request)
+    {
+        try {
+            $contractor = Contractor::where('uuid', $request->uuid)->first();
+
+            $contractor->plans()->detach($request->plans);
+
+            return ['status'=>true, 'message'=> 'Planos excluidos.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As Planos não foram excluidos.', 'error'=> $th->getMessage()];
+        }
+
     }
 }

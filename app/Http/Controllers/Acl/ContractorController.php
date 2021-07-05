@@ -73,4 +73,19 @@ class ContractorController extends Controller
 
         return $this->repository->destroy($uuid);
     }
+
+    public function contractorPlans($uuid)
+    {
+        return $this->repository->contractorPlans($uuid);
+    }
+
+    public function attachPlans(Request $request)
+    {
+        return $this->repository->attachPlans($request);
+    }
+
+    public function detachPlans(Request $request)
+    {
+        return $this->repository->detachPlans($request);
+    }
 }

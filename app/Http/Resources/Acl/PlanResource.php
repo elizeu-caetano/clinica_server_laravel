@@ -16,6 +16,7 @@ class PlanResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
             'price' => 'R$ ' . number_format($this->price, 2, ',', '.'),
