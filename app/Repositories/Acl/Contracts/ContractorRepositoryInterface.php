@@ -20,6 +20,8 @@ interface ContractorRepositoryInterface {
 
     public function destroy($uuid);
 
+    public function uploadLogo($request);
+
     public function contractorPlans($uuid);
 
     public function attachPlans($request);

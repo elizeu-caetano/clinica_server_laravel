@@ -10,6 +10,8 @@ use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Image;
+use Symfony\Component\Console\Input\Input;
 
 class ContractorRepository implements ContractorRepositoryInterface {
 
@@ -89,14 +91,9 @@ class ContractorRepository implements ContractorRepositoryInterface {
     {
         try {
 
-            $data = $request->except(['plan_id', 'person', 'active', 'deleted', 'created_at']);
+            $data = $request->except(['plan_id', 'person', 'active', 'deleted', 'created_at', 'logo']);
 
             $contractor = Contractor::where('uuid', $request->uuid)->first();
-
-            if ($request->hasFile('logo') && $request->logo->isValid()) {
-               // Storage::disk('s3')->delete($contractor->logo);
-                $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
-            }
 
             $contractor->update($data);
 
@@ -152,6 +149,25 @@ class ContractorRepository implements ContractorRepositoryInterface {
         } catch (\Throwable $th) {
 
             return ['status'=>false, 'message'=> 'O Contratante não foi excluído', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function uploadLogo($request)
+    {
+        try {
+            $contractor = Contractor::where('uuid', $request->uuid)->first();
+            $extension = request()->file('image')->getClientOriginalExtension();
+            $image = Image::make(request()->file('image'))->resize(500,315)->encode($extension);
+            $path = 'logos/'.Str::random(40).'.'.$extension;
+            Storage::disk('s3')->put($path, (string)$image, 'public');
+
+            $contractor->update(['logo' => $path]);
+
+            return ['status' => true, 'message' => 'A logo foi adicionada.'];
+
+        } catch (\Throwable $th) {
+
+            return ['status' => false, 'message' => 'A logo não foi adicionada.', 'error' => $th->getMessage()];
         }
     }
 

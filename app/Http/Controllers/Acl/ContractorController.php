@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Acl;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\ContractorRequest;
+use App\Http\Requests\ImageRequest;
 use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -72,6 +73,13 @@ class ContractorController extends Controller
         Gate::authorize('destroy_contractor');
 
         return $this->repository->destroy($uuid);
+    }
+
+    public function uploadLogo(ImageRequest $request)
+    {
+        Gate::authorize('update_contractor');
+
+        return $this->repository->uploadLogo($request);
     }
 
     public function contractorPlans($uuid)
