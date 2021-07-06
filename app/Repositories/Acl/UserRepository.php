@@ -48,7 +48,7 @@ class UserRepository implements UserRepositoryInterface {
             $data['password'] = Hash::make($senha);
             $data['uuid'] = Str::uuid();
             $data['contractor_id'] = Auth::user()->contractor_id;
-            $data['phone'] = $data->cell;
+            $data['phone'] = $request->cell;
             $data['type'] = 'Celular';
             $data['token'] = Str::random(40);
 
