@@ -17,11 +17,11 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('name');
-            $table->string('email');
+            $table->string('email', 100);
             $table->string('password');
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
-            $table->string('photo', 255)->nullable();
+            $table->string('photo')->nullable();
             $table->foreignId('contractor_id')->constrained();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

@@ -14,7 +14,7 @@ class AddEmailToContractorsTable extends Migration
     public function up()
     {
         Schema::table('contractors', function (Blueprint $table) {
-            $table->string('email', 50)->nullable()->after('phone');
+            $table->string('email', 100)->nullable()->after('phone');
         });
     }
 

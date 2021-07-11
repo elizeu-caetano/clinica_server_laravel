@@ -15,8 +15,8 @@ class CreatePhonesUsersTable extends Migration
     {
         Schema::create('phones_users', function (Blueprint $table) {
             $table->id();
-            $table->string('phone');
-            $table->string('type');
+            $table->string('phone', 20);
+            $table->string('type', 40);
             $table->boolean('deleted')->default(false);
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
