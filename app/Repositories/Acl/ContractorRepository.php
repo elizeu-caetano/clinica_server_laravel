@@ -142,13 +142,15 @@ class ContractorRepository implements ContractorRepositoryInterface {
                 Storage::disk('s3')->delete($contractor->logo);
             }
 
+            $contractor->plans()->detach();
+
             $contractor->delete();
 
-            return ['status'=>true, 'message'=> 'O Contratante foi excluído.'];
+            return ['status'=> true, 'message'=> 'O Contratante foi excluído.'];
 
         } catch (\Throwable $th) {
 
-            return ['status'=>false, 'message'=> 'O Contratante não foi excluído', 'error'=> $th->getMessage()];
+            return ['status'=> false, 'message'=> 'O Contratante não foi excluído', 'error'=> $th->getMessage()];
         }
     }
 

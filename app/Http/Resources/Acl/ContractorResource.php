@@ -4,7 +4,6 @@ namespace App\Http\Resources\Acl;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ContractorResource extends JsonResource
@@ -26,9 +25,7 @@ class ContractorResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'type_person' => $this->type_person,
-            'plan_id' => DB::table('contractor_plan as cp')->join('plans as p', 'p.id', '=', 'cp.plan_id')
-                        ->select('p.id as plan_id', 'p.name')->where('cp.contractor_id', $this->id)
-                        ->where('p.id', '>', 2)->get(),
+            'plans' => PlanResource::collection($this->plans()->where('id', '>', 1)->get()),
             'person' => $this->type_person == 'J' ? 'Jurídica' : 'Física',
             'active' => $this->active ? 'Sim' : 'Não',
             'logo' => $this->logo ? env('AWS_URL').$this->logo : null,
