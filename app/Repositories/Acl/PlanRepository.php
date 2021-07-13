@@ -20,6 +20,7 @@ class PlanRepository implements PlanRepositoryInterface {
             $search = $request->search;
 
             $plans = Plan::where('active', $active)
+            ->where('id', '>', 1)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
                 ->orWhere('price', 'LIKE', "%{$search}%");
