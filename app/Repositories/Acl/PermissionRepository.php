@@ -42,7 +42,16 @@ class PermissionRepository implements PermissionRepositoryInterface {
                 $data['permission'] = $request->permission;
 
                 $permission = Permission::create($data);
+
+                if (!$request->developer) {
+                    $permission->roles()->attach(1);
+                }
+
+                if ($request->plan_ids) {
+                    $permission->plans()->attach($request->plan_ids);
+                }
             }
+
 
             return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
@@ -54,8 +63,6 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
     private function storeBatch($request)
     {
-        $idPermissao = [];
-
         $permissions = $this->createData($request->listPermission);
 
         for ($i=0; $i < count($permissions); $i++) {
@@ -64,8 +71,16 @@ class PermissionRepository implements PermissionRepositoryInterface {
                 $data['name'] = $value . ' ' . $request->name;
                 $data['permission'] = $key . '_' . $request->permission;
             }
+
             $permission = Permission::create($data);
-            array_push($idPermissao, $permission->id);
+
+            if (!$request->developer) {
+                $permission->roles()->attach(1);
+            }
+
+            if ($request->plan_ids) {
+                $permission->plans()->attach($request->plan_ids);
+            }
         }
 
         return $permission;

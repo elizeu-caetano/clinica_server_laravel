@@ -17,7 +17,8 @@ class PermissionRequest extends FormRequest
             $rules = [
                 'name' => ['required', 'unique:permissions'],
                 'permission' => ['required', 'unique:permissions'],
-                'listPermission' => Rule::requiredIf($this->lote)
+                'listPermission' => Rule::requiredIf($this->lote),
+                'plan_ids' => ['required'],
             ];
         }
 
@@ -38,7 +39,8 @@ class PermissionRequest extends FormRequest
             'name.unique' => 'Já existe uma permissão com este nome.',
             'permission.required' => 'A Permissão é obrigatória.',
             'permission.unique' => 'Já existe uma permissão com esta permission.',
-            'listPermission.required' => 'Selecione pelo menos uma descrição abaixo.'
+            'listPermission.required' => 'Selecione pelo menos uma descrição abaixo.',
+            'plan_ids.required' => 'Selecione pelo menos um plano abaixo.'
         ];
     }
 
