@@ -53,6 +53,7 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::put('users/inactivate/{uuid}', [UserController::class, 'inactivate']);
     Route::put('users/deleted/{uuid}', [UserController::class, 'deleted']);
     Route::put('users/recover/{uuid}', [UserController::class, 'recover']);
+    Route::any('users/create-admin', [UserController::class, 'storeAdmin']);
     Route::apiResource('users', UserController::class);
 
 });

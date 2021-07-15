@@ -8,8 +8,10 @@ interface UserRepositoryInterface {
 
     public function store($request);
 
+    public function storeAdmin($request);
+
     public function show($uuid);
-    
+
     public function update($request);
 
     public function activate($uuid);
@@ -21,5 +23,5 @@ interface UserRepositoryInterface {
     public function recover($uuid);
 
     public function destroy($uuid);
-    
+
 }

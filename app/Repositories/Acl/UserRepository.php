@@ -66,6 +66,31 @@ class UserRepository implements UserRepositoryInterface {
         }
     }
 
+    public function storeAdmin($request)
+    {
+        try {
+            $data = $request->all();
+            $senha = rand(111111, 999999);
+            $data['password'] = Hash::make($senha);
+            $data['uuid'] = Str::uuid();
+            $data['phone'] = $request->cell;
+            $data['type'] = 'Celular';
+            $data['token'] = Str::random(40);
+
+            $user = User::create($data);
+            $user->phones()->create($data);
+
+            $user->password = $senha;
+            event(new NewUser($user));
+
+            return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
+
+        } catch (\Throwable $th) {
+
+            return ['status' => false, 'message' => 'O Usuário não foi cadastrado.', 'error' => $th->getMessage()];
+        }
+    }
+
     public function show($uuid)
     {
         try {

@@ -30,6 +30,13 @@ class UserController extends Controller
         return $this->repository->store($request);
     }
 
+    public function storeAdmin(UserRequest $request)
+    {
+        Gate::authorize('store_user_admin');
+
+        return $this->repository->storeAdmin($request);
+    }
+
     public function show($uuid)
     {
        Gate::authorize('show_user');
