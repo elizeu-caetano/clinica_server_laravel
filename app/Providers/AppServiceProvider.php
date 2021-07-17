@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Acl\{
+    Contractor
+};
+use App\Observers\{
+    ContractorObserver
+};
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +29,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        Contractor::observe(ContractorObserver::class);
     }
 }

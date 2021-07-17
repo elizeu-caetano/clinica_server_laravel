@@ -7,6 +7,7 @@ use App\Http\Resources\Acl\PlanResource;
 use App\Models\Acl\Contractor;
 use App\Models\Acl\Plan;
 use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -57,7 +58,11 @@ class ContractorRepository implements ContractorRepositoryInterface {
     {
         try {
 
+
+
             $data = $request->all();
+            $data['plan_ids'] = explode(',', $request->plan_ids);
+           // return $data;
 
             if ($request->hasFile('logo') && $request->logo->isValid()) {
                 $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
@@ -65,6 +70,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
 
             $data['uuid'] = Str::uuid();
             $contractor = Contractor::create($data);
+            $contractor->plans()->attach($data['plan_ids']);
 
             return ['status' => true, 'message' => 'O Contratante foi cadastrado.', 'data' => new ContractorResource($contractor)];
 
