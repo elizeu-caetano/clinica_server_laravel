@@ -32,6 +32,11 @@ class UserRepository implements UserRepositoryInterface {
                 ->orWhere('email', 'LIKE', "%{$search}%");
             })->get();
 
+
+            if (Auth::user()->contractor_id != 1) {
+                $users = $users->where('contractor_id', Auth::user()->contractor_id);
+            }
+
             return ['status' => true, 'data' => UserResource::collection($users)];
 
         } catch (\Throwable $th) {
@@ -190,6 +195,8 @@ class UserRepository implements UserRepositoryInterface {
             $user = User::where('uuid', $uuid)->first();
 
             $user->phones()->delete();
+            $user->roles()->detach();
+
             $user->delete();
 
             return ['status'=>true, 'message'=> 'O Usuário foi excluído.'];
