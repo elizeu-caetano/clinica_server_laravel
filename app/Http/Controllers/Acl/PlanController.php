@@ -69,16 +69,24 @@ class PlanController extends Controller
 
     public function planPermissions($uuid)
     {
+        if(Gate::none(['add_permission_plan', 'remove_permission_plan'])){
+            abort(403);
+        }
+
         return $this->repository->planPermissions($uuid);
     }
 
     public function attachPermissions(Request $request)
     {
+        Gate::authorize('add_permission_plan');
+
         return $this->repository->attachPermissions($request);
     }
 
     public function detachPermissions(Request $request)
     {
+        Gate::authorize('remove_permission_plan');
+
         return $this->repository->detachPermissions($request);
     }
 }

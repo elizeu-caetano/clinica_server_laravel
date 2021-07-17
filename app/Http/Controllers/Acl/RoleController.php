@@ -82,16 +82,24 @@ class RoleController extends Controller
 
     public function rolePermissions($uuid)
     {
+        if(Gate::none(['add_permission_role', 'remove_permission_role'])){
+            abort(403);
+        }
+
         return $this->repository->rolePermissions($uuid);
     }
 
     public function attachPermissions(Request $request)
     {
+        Gate::authorize('add_permission_role');
+
         return $this->repository->attachPermissions($request);
     }
 
     public function detachPermissions(Request $request)
     {
+        Gate::authorize('remove_permission_role');
+
         return $this->repository->detachPermissions($request);
     }
 }

@@ -84,16 +84,24 @@ class ContractorController extends Controller
 
     public function contractorPlans($uuid)
     {
+        if(Gate::none(['add_plan_contractor', 'remove_plan_contractor'])){
+            abort(403);
+        }
+
         return $this->repository->contractorPlans($uuid);
     }
 
     public function attachPlans(Request $request)
     {
+        Gate::authorize('add_plan_contractor');
+
         return $this->repository->attachPlans($request);
     }
 
     public function detachPlans(Request $request)
     {
+        Gate::authorize('remove_plan_contractor');
+
         return $this->repository->detachPlans($request);
     }
 }
