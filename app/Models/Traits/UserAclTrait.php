@@ -2,6 +2,8 @@
 
 namespace App\Models\Traits;
 
+use App\Models\Acl\Permission;
+use App\Models\Acl\Role;
 use Illuminate\Support\Facades\DB;
 
 trait UserAclTrait {
@@ -9,7 +11,8 @@ trait UserAclTrait {
     public function permissions()
     {
         if ($this->isSuperAdmin()) {
-           return  DB::table('permissions')->pluck('permission')->toArray();
+            $permissions = DB::table('permissions')->pluck('permission')->toArray();
+            return array_unique($permissions);
         } else if ($this->isAdmin()) {
             return $this->permissionsPlan();
         } else {
@@ -41,17 +44,11 @@ trait UserAclTrait {
 
     private function permissionsUser()
     {
-        $idRoles = $this->roles->pluck('id');
+        $idRoles = $this->roles->pluck('id')->toArray();
+
         $idPermissionsRoles = DB::table('permission_role')->whereIn('role_id', $idRoles)->pluck('permission_id');
 
-        $idPlans = $this->contractor->plans->pluck('id');
-
-        $permissions = DB::table('permissions as p')
-        ->join('permission_plan as pp', 'pp.permission_id', '=', 'p.id')
-        ->whereIn('pp.plan_id', $idPlans)
-        ->whereIn('pp.permission_id', $idPermissionsRoles)
-        ->pluck('p.permission')
-        ->toArray();
+        $permissions = Permission::whereIn('id', $idPermissionsRoles)->pluck('permission')->toArray();
 
         return array_unique($permissions);
     }
@@ -60,11 +57,9 @@ trait UserAclTrait {
     {
         $idPlans = $this->contractor->plans->pluck('id');
 
-        $permissions =  DB::table('permissions as p')
-        ->join('permission_plan as pp', 'pp.permission_id', '=', 'p.id')
-        ->whereIn('pp.plan_id', $idPlans)
-        ->pluck('p.permission')
-        ->toArray();
+        $idPermissionsPlans = DB::table('permission_plan')->whereIn('plan_id', $idPlans)->pluck('permission_id');
+
+        $permissions = Permission::whereIn('id', $idPermissionsPlans)->pluck('permission')->toArray();
 
         return array_unique($permissions);
     }
