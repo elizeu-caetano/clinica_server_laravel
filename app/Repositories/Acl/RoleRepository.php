@@ -145,6 +145,7 @@ class RoleRepository implements RoleRepositoryInterface {
         try {
             $role = Role::where('uuid', $uuid)->first();
 
+            $role->permissions()->detach();
             $role->delete();
 
             return ['status'=>true, 'message'=> 'O Papel foi excluído.'];
