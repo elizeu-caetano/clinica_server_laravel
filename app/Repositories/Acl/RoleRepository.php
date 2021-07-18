@@ -48,7 +48,7 @@ class RoleRepository implements RoleRepositoryInterface
 
             $data = $request->all();
             $data['uuid'] = Str::uuid();
-            $data['contractor_id'] = Auth::user()->contractor_id;
+            $data['contractor_id'] = $request->contractor_id ? $request->contractor_id : Auth::user()->contractor_id;
 
             $role = Role::create($data);
 
