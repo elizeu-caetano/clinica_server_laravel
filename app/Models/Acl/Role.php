@@ -17,4 +17,9 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class);
     }
+
+    public function contractor()
+    {
+        return $this->belongsTo(Contractor::class);
+    }
 }
