@@ -19,6 +19,7 @@ class RoleResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'description' => $this->description,
+            'contractor' => $this->contractor->fantasy_name,
             'admin' => $this->admin ? 'Sim' : 'Não',
             'active' => $this->active ? 'Sim' : 'Não',
             'deleted' => $this->deleted ? 'Sim' : 'Não',
