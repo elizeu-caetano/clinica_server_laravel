@@ -6,12 +6,14 @@ use App\Http\Resources\Acl\ContractorResource;
 use App\Http\Resources\Acl\PlanResource;
 use App\Models\Acl\Contractor;
 use App\Models\Acl\Plan;
+use App\Models\Acl\Role;
 use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Image;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Console\Input\Input;
 
 class ContractorRepository implements ContractorRepositoryInterface {
@@ -58,11 +60,8 @@ class ContractorRepository implements ContractorRepositoryInterface {
     {
         try {
 
-
-
             $data = $request->all();
             $data['plan_ids'] = explode(',', $request->plan_ids);
-           // return $data;
 
             if ($request->hasFile('logo') && $request->logo->isValid()) {
                 $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
@@ -72,12 +71,27 @@ class ContractorRepository implements ContractorRepositoryInterface {
             $contractor = Contractor::create($data);
             $contractor->plans()->attach($data['plan_ids']);
 
+            $this->attachPermissiosRole($contractor);
+
             return ['status' => true, 'message' => 'O Contratante foi cadastrado.', 'data' => new ContractorResource($contractor)];
 
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Contratante não foi cadastrado.', 'error' => $th->getMessage()];
         }
+    }
+
+    private function attachPermissiosRole($contractor)
+    {
+        $idPlans = $contractor->plans->pluck('id')->toArray();
+
+        $idPermissionsPlans = DB::table('permission_plan')->whereIn('plan_id', $idPlans)->pluck('permission_id')->toArray();
+
+        $permissions =  array_unique($idPermissionsPlans);
+
+        $role = Role::where('contractor_id', $contractor->id)->first();
+
+        $role->permissions()->attach($permissions);
     }
 
     public function show($uuid)

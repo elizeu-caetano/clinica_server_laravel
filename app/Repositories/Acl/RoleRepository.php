@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class RoleRepository implements RoleRepositoryInterface {
+class RoleRepository implements RoleRepositoryInterface
+{
 
     public function search($request)
     {
@@ -21,14 +22,17 @@ class RoleRepository implements RoleRepositoryInterface {
             $search = $request->search;
 
             $roles = Role::where('active', $active)
-            ->where('deleted', false)
-            ->where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('description', 'LIKE', "%{$search}%");
-            })->get();
+                ->where('deleted', false)
+                ->where(function ($query) use ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('description', 'LIKE', "%{$search}%");
+                })->get();
+
+            if (Auth::user()->contractor_id != 1) {
+                $roles = $roles->where('contractor_id', Auth::user()->contractor_id);
+            }
 
             return ['status' => true, 'data' => RoleResource::collection($roles)];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'Não foi possível carregar os dados.', 'error' => $th->getMessage()];
@@ -46,7 +50,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role = Role::create($data);
 
             return ['status' => true, 'message' => 'O Papel foi cadastrado.', 'data' => new RoleResource($role)];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi cadastrado.', 'error' => $th->getMessage()];
@@ -60,7 +63,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role = Role::where('uuid', $uuid)->first();
 
             return ['status' => true, 'data' => new RoleResource($role)];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'Não foi possível carregar os dados.', 'error' => $th->getMessage()];
@@ -77,7 +79,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role->update($data);
 
             return ['status' => true, 'data' => new RoleResource($role), 'message' => 'O Papel foi editado.'];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi editado.', 'error' => $th->getMessage()];
@@ -91,7 +92,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => 1]);
 
             return ['status' => true, 'message' => 'O Papel foi ativado.'];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi ativado.', 'error' => $th->getMessage()];
@@ -105,7 +105,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => false]);
 
             return ['status' => true, 'message' => 'O Papel foi inativado.'];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi inativado.', 'error' => $th->getMessage()];
@@ -119,7 +118,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => true]);
 
             return ['status' => true, 'message' => 'O Papel foi deletado.'];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi deletado.', 'error' => $th->getMessage()];
@@ -133,7 +131,6 @@ class RoleRepository implements RoleRepositoryInterface {
             $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => false]);
 
             return ['status' => true, 'message' => 'O Papel foi recuperado.'];
-
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'O Papel não foi recuperado.', 'error' => $th->getMessage()];
@@ -148,10 +145,9 @@ class RoleRepository implements RoleRepositoryInterface {
             $role->permissions()->detach();
             $role->delete();
 
-            return ['status'=>true, 'message'=> 'O Papel foi excluído.'];
-
+            return ['status' => true, 'message' => 'O Papel foi excluído.'];
         } catch (\Throwable $th) {
-            return ['status'=>false, 'message'=> 'O Papel não foi excluído', 'error'=> $th->getMessage()];
+            return ['status' => false, 'message' => 'O Papel não foi excluído', 'error' => $th->getMessage()];
         }
     }
 
@@ -159,18 +155,23 @@ class RoleRepository implements RoleRepositoryInterface {
     {
         try {
             $role = Role::where('uuid', $uuid)->first();
-            $rolesId = $role->permissions()->pluck('id');
-
+            $permissionsRolesId = $role->permissions()->pluck('id')->toArray();
             $permissionsRole = $role->permissions()->get();
 
             if (Auth::user()->isSuperAdmin()) {
-                $notPermissionsRole = Permission::whereNotIn('id', $rolesId)->get();
+                $notPermissionsRole = Permission::whereNotIn('id', $permissionsRolesId)->get();
+            } else {
+                if ($role->admin) {
+                    return ['status' => false, 'message' => 'O Papel de Administrador não pode ser alterado.', 'permissionsRole' => [], 'notPermissionsRole' => []];
+                }
+
+                $roleAdmin = Role::where('contractor_id', $role->contractor_id)->first();
+                $notPermissionsRole = $roleAdmin->permissions()->whereNotIn('id', $permissionsRolesId)->get();
             }
 
-            return ['status'=>true, 'permissionsRole'=> $permissionsRole, 'notPermissionsRole' => $notPermissionsRole];
-
+            return ['status' => true, 'permissionsRole' => $permissionsRole, 'notPermissionsRole' => $notPermissionsRole];
         } catch (\Throwable $th) {
-            return ['status'=>false, 'message'=> 'Não foi possível carregar as permissões', 'error'=> $th->getMessage()];
+            return ['status' => false, 'message' => 'Não foi possível carregar as permissões', 'error' => $th->getMessage()];
         }
     }
 
@@ -187,12 +188,10 @@ class RoleRepository implements RoleRepositoryInterface {
                 $notPermissionsRole = Permission::whereNotIn('id', $rolesId)->get();
             }
 
-            return ['status'=>true, 'message'=> 'Permissões adicionadas.', 'permissionsRole'=> PermissionResource::collection($permissionsRole), 'notPermissionsRole' => PermissionResource::collection($notPermissionsRole)];
-
+            return ['status' => true, 'message' => 'Permissões adicionadas.', 'permissionsRole' => PermissionResource::collection($permissionsRole), 'notPermissionsRole' => PermissionResource::collection($notPermissionsRole)];
         } catch (\Throwable $th) {
-            return ['status'=>false, 'message'=> 'As permissões não foi adicionadas.', 'error'=> $th->getMessage()];
+            return ['status' => false, 'message' => 'As permissões não foi adicionadas.', 'error' => $th->getMessage()];
         }
-
     }
 
     public function detachPermissions($request)
@@ -202,11 +201,9 @@ class RoleRepository implements RoleRepositoryInterface {
 
             $role->permissions()->detach($request->permissions);
 
-            return ['status'=>true, 'message'=> 'Permissões excluidas.'];
-
+            return ['status' => true, 'message' => 'Permissões excluidas.'];
         } catch (\Throwable $th) {
-            return ['status'=>false, 'message'=> 'As Permissões não foi excluidas.', 'error'=> $th->getMessage()];
+            return ['status' => false, 'message' => 'As Permissões não foi excluidas.', 'error' => $th->getMessage()];
         }
-
     }
 }
