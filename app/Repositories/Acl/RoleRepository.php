@@ -26,7 +26,10 @@ class RoleRepository implements RoleRepositoryInterface
                 ->where(function ($query) use ($search) {
                     $query->where('name', 'LIKE', "%{$search}%")
                         ->orWhere('description', 'LIKE', "%{$search}%");
-                })->get();
+                })
+                ->orderBy('contractor_id')
+                ->orderBy('name')
+                ->get();
 
             if (Auth::user()->contractor_id != 1) {
                 $roles = $roles->where('contractor_id', Auth::user()->contractor_id);
