@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Acl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\UserRequest;
+use App\Http\Requests\Acl\UserUpdatePasswordRequest;
 use App\Repositories\Acl\Contracts\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -82,9 +83,18 @@ class UserController extends Controller
 
     public function destroy($uuid)
     {
-       Gate::authorize('destroy_user');
+        Gate::authorize('destroy_user');
 
         return $this->repository->destroy($uuid);
     }
 
+    public function profile()
+    {
+        return $this->repository->profile();
+    }
+
+    public function updatePassword(UserUpdatePasswordRequest $request)
+    {
+        return $this->repository->updatePassword($request);
+    }
 }

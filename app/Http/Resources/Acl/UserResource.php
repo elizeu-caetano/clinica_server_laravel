@@ -18,7 +18,7 @@ class UserResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'photo' => url('storage/' . $this->photo),
+            'photo' =>  $this->photo ? env('AWS_URL').$this->photo : null,
             'email' => $this->email,
             'contractor' => new ContractorResource($this->contractor),
             'active' => $this->active ? 'Sim' : 'Não',

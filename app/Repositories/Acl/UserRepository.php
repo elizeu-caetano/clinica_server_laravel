@@ -206,4 +206,30 @@ class UserRepository implements UserRepositoryInterface {
         }
     }
 
+    public function profile(){
+        try {
+            $user = Auth::user();
+
+            return ['status'=>true, 'data'=> new UserResource($user)];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'O Usuário não foi excluído', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function updatePassword($request){
+        try {
+            $user = Auth::user();
+
+            $senha =  Hash::make($request->password);
+
+            $user->update(['password' => $senha]);
+
+            return ['status'=>true, 'message'=> 'A senha foi alterada.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'A senha não foi alterada.', 'error'=> $th->getMessage()];
+        }
+    }
+
 }

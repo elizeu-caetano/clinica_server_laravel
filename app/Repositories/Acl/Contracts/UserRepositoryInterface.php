@@ -24,4 +24,7 @@ interface UserRepositoryInterface {
 
     public function destroy($uuid);
 
+    public function profile();
+
+    public function updatePassword($request);
 }
