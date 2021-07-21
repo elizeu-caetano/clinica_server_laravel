@@ -15,7 +15,7 @@ class Contractor extends Model
 
     public function roles()
     {
-        return $this->hasMany(Roles::class);
+        return $this->hasMany(Role::class);
     }
 
     public function plans()

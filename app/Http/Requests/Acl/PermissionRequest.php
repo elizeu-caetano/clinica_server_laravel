@@ -17,8 +17,8 @@ class PermissionRequest extends FormRequest
             $rules = [
                 'name' => ['required', 'unique:permissions'],
                 'permission' => ['required', 'unique:permissions'],
-                'listPermission' => Rule::requiredIf($this->lote),
-                'plan_ids' => ['required'],
+                'listPermission' => [Rule::requiredIf($this->lote)],
+                'plan_ids' => [Rule::requiredIf(!$this->developer)],
             ];
         }
 

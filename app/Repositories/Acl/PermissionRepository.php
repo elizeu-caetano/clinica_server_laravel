@@ -8,6 +8,7 @@ use App\Models\Acl\Plan;
 use App\Repositories\Acl\Contracts\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class PermissionRepository implements PermissionRepositoryInterface {
 
@@ -32,7 +33,6 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
     public function store($request)
     {
-
         try {
 
             if ($request->lote) {
@@ -43,20 +43,19 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
                 $permission = Permission::create($data);
 
-                if (!$request->developer) {
-                    $permission->roles()->attach(1);
-                }
-
                 if ($request->plan_ids) {
                     $permission->plans()->attach($request->plan_ids);
                 }
-            }
 
+                if (!$request->developer) {
+                    $this->attachPermissionRole($permission);
+                }
+
+            }
 
             return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
         } catch (\Throwable $th) {
-
             return ['status' => false, 'message' => 'A Permissão não foi cadastrada.', 'error' => $th->getMessage()];
         }
     }
@@ -74,16 +73,32 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
             $permission = Permission::create($data);
 
-            if (!$request->developer) {
-                $permission->roles()->attach(1);
-            }
-
             if ($request->plan_ids) {
                 $permission->plans()->attach($request->plan_ids);
+            }
+
+            if (!$request->developer) {
+                $this->attachPermissionRole($permission);
             }
         }
 
         return $permission;
+    }
+
+    private function attachPermissionRole($permission)
+    {
+        $plans = $permission->plans()->first();
+        $contractors = $plans->contractors()->get();
+
+        $rolesId = [];
+        foreach ($contractors as $contractor) {
+            $roles = $contractor->roles()->where('admin', true)->get();
+            foreach ($roles as $role) {
+                 array_push($rolesId, $role->id);
+            }
+        }
+
+        $permission->roles()->attach($rolesId);
     }
 
     private function createData($permissions)
@@ -148,7 +163,12 @@ class PermissionRepository implements PermissionRepositoryInterface {
     public function destroy($id)
     {
         try {
-            Permission::find($id)->delete();
+            $permission = Permission::find($id);
+
+            $permission->plans()->detach();
+            $permission->roles()->detach();
+
+            $permission->delete();
 
             return ['status'=> true, 'message'=> 'A Permissão foi excluída.'];
 
