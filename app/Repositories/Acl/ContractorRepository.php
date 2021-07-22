@@ -8,13 +8,10 @@ use App\Models\Acl\Contractor;
 use App\Models\Acl\Plan;
 use App\Models\Acl\Role;
 use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Image;
-use phpDocumentor\Reflection\Types\This;
-use Symfony\Component\Console\Input\Input;
 
 class ContractorRepository implements ContractorRepositoryInterface {
 
@@ -178,10 +175,15 @@ class ContractorRepository implements ContractorRepositoryInterface {
     {
         try {
             $contractor = Contractor::where('uuid', $request->uuid)->first();
+
             $extension = request()->file('image')->getClientOriginalExtension();
             $image = Image::make(request()->file('image'))->resize(500,315)->encode($extension);
             $path = 'logos/'.Str::random(40).'.'.$extension;
             Storage::disk('s3')->put($path, (string)$image, 'public');
+
+            if ($contractor->logo != '') {
+                Storage::disk('s3')->delete($contractor->logo);
+            }
 
             $contractor->update(['logo' => $path]);
 

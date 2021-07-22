@@ -4,17 +4,14 @@ namespace App\Repositories\Acl;
 
 use App\Events\NewUser;
 use App\Http\Resources\Acl\UserResource;
-use App\Mail\AuthMail;
-use App\Mail\UserRegisteredMail;
 use App\Models\Acl\User;
-use App\Models\Acl\PhonesUser;
 use App\Repositories\Acl\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Laravel\Passport\Bridge\UserRepository as BridgeUserRepository;
+use Illuminate\Support\Facades\Storage;
+use Image;
 
 class UserRepository implements UserRepositoryInterface {
 
@@ -217,6 +214,19 @@ class UserRepository implements UserRepositoryInterface {
         }
     }
 
+    public function profileUpdate($request){
+        try {
+            $user = Auth::user();
+
+            $user->update($request->all());
+
+            return ['status'=>true,'message'=> 'O Usuário foi editado.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'O Usuário não foi editado', 'error'=> $th->getMessage()];
+        }
+    }
+
     public function updatePassword($request){
         try {
             $user = Auth::user();
@@ -229,6 +239,29 @@ class UserRepository implements UserRepositoryInterface {
 
         } catch (\Throwable $th) {
             return ['status'=>false, 'message'=> 'A senha não foi alterada.', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function uploadPhotoProfile($request){
+        try {
+            $user = Auth::user();
+
+            $extension = request()->file('image')->getClientOriginalExtension();
+            $image = Image::make(request()->file('image'))->resize(500,500)->encode($extension);
+            $path = 'users/'.Str::random(40).'.'.$extension;
+            Storage::disk('s3')->put($path, (string)$image, 'public');
+
+            if ($user->photo != '') {
+                Storage::disk('s3')->delete($user->photo);
+            }
+
+            $user->update(['photo' => $path]);
+
+            return ['status' => true, 'message' => 'A Foto foi adicionada.'];
+
+        } catch (\Throwable $th) {
+
+            return ['status' => false, 'message' => 'A Foto não foi adicionada.', 'error' => $th->getMessage()];
         }
     }
 

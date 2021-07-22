@@ -55,7 +55,9 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::put('users/recover/{uuid}', [UserController::class, 'recover']);
     Route::any('users/create-admin', [UserController::class, 'storeAdmin']);
     Route::get('users/profile', [UserController::class, 'profile']);
-    Route::put('users/update-password', [UserController::class, 'updatePassword']);
+    Route::put('users/profile-update', [UserController::class, 'profileUpdate']);
+    Route::put('users/profile-update-password', [UserController::class, 'updatePassword']);
+    Route::post('users/profile-upload-photo', [UserController::class, 'uploadPhotoProfile']);
     Route::apiResource('users', UserController::class);
 });
 

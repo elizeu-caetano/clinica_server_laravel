@@ -26,5 +26,9 @@ interface UserRepositoryInterface {
 
     public function profile();
 
+    public function profileUpdate($request);
+
+    public function uploadPhotoProfile($request);
+
     public function updatePassword($request);
 }

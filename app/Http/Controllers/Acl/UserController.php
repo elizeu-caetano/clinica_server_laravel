@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Acl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\UserRequest;
 use App\Http\Requests\Acl\UserUpdatePasswordRequest;
+use App\Http\Requests\ImageRequest;
 use App\Repositories\Acl\Contracts\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -90,11 +91,25 @@ class UserController extends Controller
 
     public function profile()
     {
+        Gate::authorize('update_profile_user');
         return $this->repository->profile();
+    }
+
+    public function profileUpdate(UserRequest $request)
+    {
+        Gate::authorize('update_profile_user');
+        return $this->repository->profileUpdate($request);
     }
 
     public function updatePassword(UserUpdatePasswordRequest $request)
     {
+        Gate::authorize('update_password_profile_user');
         return $this->repository->updatePassword($request);
+    }
+
+    public function uploadPhotoProfile(ImageRequest $request)
+    {
+        Gate::authorize('update_profile_user');
+        return $this->repository->uploadPhotoProfile($request);
     }
 }
