@@ -257,7 +257,7 @@ class UserRepository implements UserRepositoryInterface {
 
             $user->update(['photo' => $path]);
 
-            return ['status' => true, 'message' => 'A Foto foi adicionada.'];
+            return ['status' => true, 'message' => 'A Foto foi adicionada.', 'data' => new UserResource($user)];
 
         } catch (\Throwable $th) {
 
