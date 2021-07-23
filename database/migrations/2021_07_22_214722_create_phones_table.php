@@ -16,7 +16,7 @@ class CreatePhonesTable extends Migration
         Schema::create('phones', function (Blueprint $table) {
             $table->id();
             $table->string('phone', 20);
-            $table->string('type', 40);
+            $table->string('type', 40)->nullable();
             $table->boolean('deleted')->default(false);
             $table->boolean('is_whatsapp')->default(false);
             $table->morphs('phoneable');
