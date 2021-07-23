@@ -178,6 +178,7 @@ return [
         App\Providers\TelescopeServiceProvider::class,
 
         App\Providers\RepositoryServiceProvider::class,
+        App\Providers\PolymorphicSeviceProvider::class,
 
     ],
 

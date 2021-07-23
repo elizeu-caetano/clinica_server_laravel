@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePhonesUsersTable extends Migration
+class CreatePhonesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreatePhonesUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('phones_users', function (Blueprint $table) {
+        Schema::create('phones', function (Blueprint $table) {
             $table->id();
             $table->string('phone', 20);
             $table->string('type', 40);
             $table->boolean('deleted')->default(false);
-            $table->foreignId('user_id')->constrained();
+            $table->boolean('is_whatsapp')->default(false);
+            $table->morphs('phoneable');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreatePhonesUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('phones_users');
+        Schema::dropIfExists('phones');
     }
 }

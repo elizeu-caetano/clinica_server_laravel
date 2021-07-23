@@ -2,8 +2,8 @@
 
 namespace App\Models\Acl;
 
-use App\Models\Traits\UserAclTrait;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Acl\Traits\UserAclTrait;
+use App\Models\Admin\Phone;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -51,6 +51,6 @@ class User extends Authenticatable
 
     public function phones()
     {
-        return $this->hasMany(PhonesUser::class);
+        return $this->morphMany(Phone::class, 'phoneable');
     }
 }
