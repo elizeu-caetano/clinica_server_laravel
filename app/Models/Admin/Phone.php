@@ -4,12 +4,21 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class Phone extends Model
+class Phone extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = ['phone', 'type', 'deleted', 'is_whatsapp', 'phoneable_type', 'phoneable_id'];
+
+    public function generateTags(): array
+    {
+        return [
+            $this->phoneable->uuid
+        ];
+    }
 
     public function phoneable()
     {

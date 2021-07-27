@@ -4,13 +4,16 @@ namespace App\Repositories\Acl;
 
 use App\Http\Resources\Acl\PermissionResource;
 use App\Models\Acl\Permission;
-use App\Models\Acl\Plan;
 use App\Repositories\Acl\Contracts\PermissionRepositoryInterface;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
 
 class PermissionRepository implements PermissionRepositoryInterface {
+
+    private $repository;
+
+    public function __construct(Permission $permission)
+    {
+        $this->repository = $permission;
+    }
 
     public function search($request)
     {
@@ -18,7 +21,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
             $search = $request->search;
 
-            $permissions = Permission::where(function ($query) use ($search) {
+            $permissions = $this->repository->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
                 ->orWhere('permission', 'LIKE', "%{$search}%");
             })->get();
@@ -41,7 +44,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
                 $data['name'] = $request->name;
                 $data['permission'] = $request->permission;
 
-                $permission = Permission::create($data);
+                $permission = $this->repository->create($data);
 
                 if ($request->plan_ids) {
                     $permission->plans()->attach($request->plan_ids);
@@ -71,7 +74,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
                 $data['permission'] = $key . '_' . $request->permission;
             }
 
-            $permission = Permission::create($data);
+            $permission = $this->repository->create($data);
 
             if ($request->plan_ids) {
                 $permission->plans()->attach($request->plan_ids);
@@ -133,7 +136,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
     {
         try {
 
-            $permission = Permission::find($id);
+            $permission = $this->repository->find($id);
 
             return ['status' => true, 'data' => new PermissionResource($permission)];
 
@@ -149,7 +152,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
 
             $data = $request->except(['created_at']);
 
-            $permission = Permission::find($request->id);
+            $permission = $this->repository->find($request->id);
             $permission->update($data);
 
             return ['status' => true, 'message' => 'A Permissão foi editada.', 'data' => new PermissionResource($permission)];
@@ -163,7 +166,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
     public function destroy($id)
     {
         try {
-            $permission = Permission::find($id);
+            $permission = $this->repository->find($id);
 
             $permission->plans()->detach();
             $permission->roles()->detach();

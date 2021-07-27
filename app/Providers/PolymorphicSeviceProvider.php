@@ -26,7 +26,11 @@ class PolymorphicSeviceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'users' => 'App\Models\Acl\User',
-            'contractors' => 'App\Models\Acl\Contractor'
+            'contractors' => 'App\Models\Acl\Contractor',
+            'plans' => 'App\Models\Acl\Plan',
+            'permissions' => 'App\Models\Acl\Permission',
+            'roles' => 'App\Models\Acl\Role',
+            'phones' => 'App\Models\Admin\Phone'
         ]);
     }
 }

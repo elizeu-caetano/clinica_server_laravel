@@ -12,6 +12,13 @@ use Illuminate\Support\Str;
 
 class PlanRepository implements PlanRepositoryInterface {
 
+    private $repository;
+
+    public function __construct(Plan $plan)
+    {
+        $this->repository = $plan;
+    }
+
     public function search($request)
     {
         try {
@@ -19,7 +26,7 @@ class PlanRepository implements PlanRepositoryInterface {
             $active = !$request->active ? false : true;
             $search = $request->search;
 
-            $plans = Plan::where('active', $active)
+            $plans = $this->repository->where('active', $active)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
                 ->orWhere('price', 'LIKE', "%{$search}%");
@@ -40,7 +47,7 @@ class PlanRepository implements PlanRepositoryInterface {
             $data = $request->all();
             $data['uuid'] = Str::uuid();
 
-            $plan = Plan::create($data);
+            $plan = $this->repository->create($data);
 
             return ['status' => true, 'message' => 'O Plano foi cadastrado.', 'data' => new PlanResource($plan)];
 
@@ -54,7 +61,7 @@ class PlanRepository implements PlanRepositoryInterface {
     {
         try {
 
-            $plan = Plan::where('uuid', $uuid)->first();
+            $plan = $this->repository->where('uuid', $uuid)->first();
 
             return ['status' => true, 'data' => new PlanResource($plan)];
 
@@ -70,7 +77,7 @@ class PlanRepository implements PlanRepositoryInterface {
 
             $data = $request->except(['active', 'created_at']);
 
-            $plan = Plan::where('uuid', $request->uuid)->first();
+            $plan = $this->repository->where('uuid', $request->uuid)->first();
             $plan->update($data);
 
             return ['status' => true, 'data' => new PlanResource($plan), 'message' => 'O Plano foi editado.'];
@@ -84,8 +91,9 @@ class PlanRepository implements PlanRepositoryInterface {
     public function activate($uuid)
     {
         try {
+            $this->repository->where('uuid', $uuid)->update(['active' => true]);
 
-            Plan::where('uuid', $uuid)->update(['active' => 1]);
+            $this->repository->where('uuid', $uuid)->first()->activateAudit();
 
             return ['status' => true, 'message' => 'O Plano foi ativado.'];
 
@@ -98,8 +106,9 @@ class PlanRepository implements PlanRepositoryInterface {
     public function inactivate($uuid)
     {
         try {
+            $this->repository->where('uuid', $uuid)->update(['active' => false]);
 
-            Plan::where('uuid', $uuid)->update(['active' => false]);
+            $this->repository->where('uuid', $uuid)->first()->inactivateAudit();
 
             return ['status' => true, 'message' => 'O Plano foi inativado.'];
 
@@ -112,7 +121,7 @@ class PlanRepository implements PlanRepositoryInterface {
     public function destroy($uuid)
     {
         try {
-            Plan::where('uuid', $uuid)->delete();
+            $this->repository->where('uuid', $uuid)->delete();
 
             return ['status'=>true, 'message'=> 'O Plano foi excluído.'];
 
@@ -125,7 +134,7 @@ class PlanRepository implements PlanRepositoryInterface {
     public function planPermissions($uuid)
     {
         try {
-            $plan = Plan::where('uuid', $uuid)->first();
+            $plan = $this->repository->where('uuid', $uuid)->first();
             $plansId = $plan->permissions()->pluck('id');
 
             $permissionsPlan = $plan->permissions()->get();
@@ -144,7 +153,7 @@ class PlanRepository implements PlanRepositoryInterface {
     public function attachPermissions($request)
     {
         try {
-            $plan = Plan::where('uuid', $request->uuid)->first();
+            $plan = $this->repository->where('uuid', $request->uuid)->first();
 
             $plan->permissions()->attach($request->permissions);
 
@@ -159,7 +168,7 @@ class PlanRepository implements PlanRepositoryInterface {
     public function detachPermissions($request)
     {
         try {
-            $plan = Plan::where('uuid', $request->uuid)->first();
+            $plan = $this->repository->where('uuid', $request->uuid)->first();
 
             $plan->permissions()->detach($request->permissions);
 

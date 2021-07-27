@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models\Acl\Traits;
+namespace App\Traits;
 
 use App\Models\Acl\Permission;
-use App\Models\Acl\Role;
 use Illuminate\Support\Facades\DB;
 
 trait UserAclTrait {

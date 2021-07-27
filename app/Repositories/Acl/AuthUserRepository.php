@@ -6,19 +6,23 @@ use App\Http\Resources\Acl\AuthUserResource;
 use App\Models\Acl\User;
 use App\Repositories\Acl\Contracts\AuthUserRepositoryInterface;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Logout;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Passport;
 
 class AuthUserRepository implements AuthUserRepositoryInterface {
 
+    private $repository;
+
+    public function __construct(User $user)
+    {
+        $this->repository = $user;
+    }
+
     public function auth($request)
     {
         try {
 
-            $user = User::where('email', $request->email)->first();
+            $user = $this->repository->where('email', $request->email)->first();
 
             //define how many hours for the token to expire
             $hour = $request->timeToken ? $request->timeToken : 12;
@@ -78,7 +82,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
     {
         try {
 
-            $user = User::where('uuid', $uuid)->first();
+            $user = $this->repository->where('uuid', $uuid)->first();
 
             if ($user) {
 

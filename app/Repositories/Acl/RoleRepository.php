@@ -13,6 +13,12 @@ use Illuminate\Support\Str;
 
 class RoleRepository implements RoleRepositoryInterface
 {
+    private $repository;
+
+    public function __construct(Role $role)
+    {
+        $this->repository = $role;
+    }
 
     public function search($request)
     {
@@ -21,7 +27,7 @@ class RoleRepository implements RoleRepositoryInterface
             $active = !$request->active ? false : true;
             $search = $request->search;
 
-            $roles = Role::where('active', $active)
+            $roles = $this->repository->where('active', $active)
                 ->where('deleted', false)
                 ->where(function ($query) use ($search) {
                     $query->where('name', 'LIKE', "%{$search}%")
@@ -50,7 +56,7 @@ class RoleRepository implements RoleRepositoryInterface
             $data['uuid'] = Str::uuid();
             $data['contractor_id'] = $request->contractor_id ? $request->contractor_id : Auth::user()->contractor_id;
 
-            $role = Role::create($data);
+            $role = $this->repository->create($data);
 
             return ['status' => true, 'message' => 'O Papel foi cadastrado.', 'data' => new RoleResource($role)];
         } catch (\Throwable $th) {
@@ -63,7 +69,7 @@ class RoleRepository implements RoleRepositoryInterface
     {
         try {
 
-            $role = Role::where('uuid', $uuid)->first();
+            $role = $this->repository->where('uuid', $uuid)->first();
 
             return ['status' => true, 'data' => new RoleResource($role)];
         } catch (\Throwable $th) {
@@ -78,7 +84,7 @@ class RoleRepository implements RoleRepositoryInterface
 
             $data = $request->except(['admin', 'active', 'deleted', 'created_at']);
 
-            $role = Role::where('uuid', $request->uuid)->first();
+            $role = $this->repository->where('uuid', $request->uuid)->first();
             $role->update($data);
 
             return ['status' => true, 'data' => new RoleResource($role), 'message' => 'O Papel foi editado.'];
@@ -91,8 +97,9 @@ class RoleRepository implements RoleRepositoryInterface
     public function activate($uuid)
     {
         try {
+            $this->repository->where('uuid', $uuid)->update(['active' => true]);
 
-            $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => 1]);
+            $this->repository->where('uuid', $uuid)->first()->activateAudit();
 
             return ['status' => true, 'message' => 'O Papel foi ativado.'];
         } catch (\Throwable $th) {
@@ -104,8 +111,9 @@ class RoleRepository implements RoleRepositoryInterface
     public function inactivate($uuid)
     {
         try {
+            $this->repository->where('uuid', $uuid)->update(['active' => false]);
 
-            $role = DB::table('roles')->where('uuid', $uuid)->update(['active' => false]);
+            $this->repository->where('uuid', $uuid)->first()->inactivateAudit();
 
             return ['status' => true, 'message' => 'O Papel foi inativado.'];
         } catch (\Throwable $th) {
@@ -117,8 +125,9 @@ class RoleRepository implements RoleRepositoryInterface
     public function deleted($uuid)
     {
         try {
+            $this->repository->where('uuid', $uuid)->update(['deleted' => true]);
 
-            $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => true]);
+            $this->repository->where('uuid', $uuid)->first()->deletedAudit();
 
             return ['status' => true, 'message' => 'O Papel foi deletado.'];
         } catch (\Throwable $th) {
@@ -130,8 +139,9 @@ class RoleRepository implements RoleRepositoryInterface
     public function recover($uuid)
     {
         try {
+            $this->repository->where('uuid', $uuid)->update(['deleted' => false]);
 
-            $role = DB::table('roles')->where('uuid', $uuid)->update(['deleted' => false]);
+            $this->repository->where('uuid', $uuid)->first()->recoverAudit();
 
             return ['status' => true, 'message' => 'O Papel foi recuperado.'];
         } catch (\Throwable $th) {
@@ -143,7 +153,7 @@ class RoleRepository implements RoleRepositoryInterface
     public function destroy($uuid)
     {
         try {
-            $role = Role::where('uuid', $uuid)->first();
+            $role = $this->repository->where('uuid', $uuid)->first();
 
             $role->permissions()->detach();
             $role->delete();
@@ -157,7 +167,7 @@ class RoleRepository implements RoleRepositoryInterface
     public function rolePermissions($uuid)
     {
         try {
-            $role = Role::where('uuid', $uuid)->first();
+            $role = $this->repository->where('uuid', $uuid)->first();
             $permissionsRolesId = $role->permissions()->pluck('id')->toArray();
             $permissionsRole = $role->permissions()->get();
 
@@ -168,7 +178,7 @@ class RoleRepository implements RoleRepositoryInterface
                     return ['status' => false, 'message' => 'O Papel de Administrador não pode ser alterado.', 'permissionsRole' => [], 'notPermissionsRole' => []];
                 }
 
-                $roleAdmin = Role::where('contractor_id', $role->contractor_id)->first();
+                $roleAdmin = $this->repository->where('contractor_id', $role->contractor_id)->first();
                 $notPermissionsRole = $roleAdmin->permissions()->whereNotIn('id', $permissionsRolesId)->get();
             }
 
@@ -181,7 +191,7 @@ class RoleRepository implements RoleRepositoryInterface
     public function attachPermissions($request)
     {
         try {
-            $role = Role::where('uuid', $request->uuid)->first();
+            $role = $this->repository->where('uuid', $request->uuid)->first();
             $rolesId = $role->permissions()->pluck('id');
 
             $role->permissions()->attach($request->permissions);
@@ -200,7 +210,7 @@ class RoleRepository implements RoleRepositoryInterface
     public function detachPermissions($request)
     {
         try {
-            $role = Role::where('uuid', $request->uuid)->first();
+            $role = $this->repository->where('uuid', $request->uuid)->first();
 
             $role->permissions()->detach($request->permissions);
 
