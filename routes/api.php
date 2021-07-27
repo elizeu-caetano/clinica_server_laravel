@@ -4,63 +4,28 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Acl\{
     AuthUserController,
-    ContractorController,
-    PermissionController,
-    PlanController,
-    RoleController,
-    UserController
+    PermissionController
 };
 
+Route::post('/auth', [AuthUserController::class, 'auth']);
+Route::get('/auth/user-email-confirmation/{uuid}/{token}', [AuthUserController::class, 'emailConfirmation']);
 
 Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::get('/authorized', [AuthUserController::class, 'authorized']);
-    Route::post('/logout', [AuthUserController::class, 'logout']);
 
-    Route::post('contractors/search', [ContractorController::class, 'search']);
-    Route::put('contractors/activate/{uuid}', [ContractorController::class, 'activate']);
-    Route::put('contractors/inactivate/{uuid}', [ContractorController::class, 'inactivate']);
-    Route::put('contractors/deleted/{uuid}', [ContractorController::class, 'deleted']);
-    Route::put('contractors/recover/{uuid}', [ContractorController::class, 'recover']);
-    Route::post('contractors/upload-logo', [ContractorController::class, 'uploadLogo']);
-    Route::get('contractors/contractor-plans/{uuid}', [ContractorController::class, 'contractorPlans']);
-    Route::post('contractors/contractor-plans/attach', [ContractorController::class, 'attachPlans']);
-    Route::post('contractors/contractor-plans/detach', [ContractorController::class, 'detachPlans']);
-    Route::apiResource('contractors', ContractorController::class);
+    Route::post('/logout', [AuthUserController::class, 'logout']);
 
     Route::any('permissions/search', [PermissionController::class, 'search']);
     Route::apiResource('permissions', PermissionController::class);
 
-    Route::any('plans/search', [PlanController::class, 'search']);
-    Route::put('plans/activate/{uuid}', [PlanController::class, 'activate']);
-    Route::put('plans/inactivate/{uuid}', [PlanController::class, 'inactivate']);
-    Route::get('plans/plan-permissions/{uuid}', [PlanController::class, 'planPermissions']);
-    Route::post('plans/plan-permissions/attach', [PlanController::class, 'attachPermissions']);
-    Route::post('plans/plan-permissions/detach', [PlanController::class, 'detachPermissions']);
-    Route::apiResource('plans', PlanController::class);
+    Route::prefix('contractors')->group(base_path('routes/api-contractors.php'));
 
-    Route::any('roles/search', [RoleController::class, 'search']);
-    Route::put('roles/activate/{uuid}', [RoleController::class, 'activate']);
-    Route::put('roles/inactivate/{uuid}', [RoleController::class, 'inactivate']);
-    Route::put('roles/deleted/{uuid}', [RoleController::class, 'deleted']);
-    Route::put('roles/recover/{uuid}', [RoleController::class, 'recover']);
-    Route::get('roles/role-permissions/{uuid}', [RoleController::class, 'rolePermissions']);
-    Route::post('roles/role-permissions/attach', [RoleController::class, 'attachPermissions']);
-    Route::post('roles/role-permissions/detach', [RoleController::class, 'detachPermissions']);
-    Route::apiResource('roles', RoleController::class);
+    Route::prefix('plans')->group(base_path('routes/api-plans.php'));
 
-    Route::any('users/search', [UserController::class, 'search']);
-    Route::put('users/activate/{uuid}', [UserController::class, 'activate']);
-    Route::put('users/inactivate/{uuid}', [UserController::class, 'inactivate']);
-    Route::put('users/deleted/{uuid}', [UserController::class, 'deleted']);
-    Route::put('users/recover/{uuid}', [UserController::class, 'recover']);
-    Route::any('users/create-admin', [UserController::class, 'storeAdmin']);
-    Route::get('users/profile', [UserController::class, 'profile']);
-    Route::put('users/profile-update', [UserController::class, 'profileUpdate']);
-    Route::put('users/profile-update-password', [UserController::class, 'updatePassword']);
-    Route::post('users/profile-upload-photo', [UserController::class, 'uploadPhotoProfile']);
-    Route::apiResource('users', UserController::class);
+    Route::prefix('roles')->group(base_path('routes/api-roles.php'));
+
+    Route::prefix('users')->group(base_path('routes/api-users.php'));
+
 });
 
-Route::post('/auth', [AuthUserController::class, 'auth']);
-Route::get('/auth/user-email-confirmation/{uuid}/{token}', [AuthUserController::class, 'emailConfirmation']);
 
