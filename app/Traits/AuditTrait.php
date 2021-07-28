@@ -18,7 +18,7 @@ trait AuditTrait {
 
     public function deletedAudit($tags)
     {
-        $this->auditing('deleted', 'deleted', 0, 1, $tags);
+        $this->auditing('erase', 'deleted', 0, 1, $tags);
     }
 
     public function recoverAudit($tags)
