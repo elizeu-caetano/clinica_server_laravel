@@ -45,7 +45,7 @@ class User extends Authenticatable implements AuditableContract
     public function generateTags(): array
     {
         return [
-            $this->uuid ?? $this->id
+            'Usuários'
         ];
     }
 

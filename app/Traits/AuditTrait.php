@@ -6,27 +6,27 @@ use Illuminate\Support\Facades\Auth;
 
 trait AuditTrait {
 
-    public function activateAudit()
+    public function activateAudit($tags)
     {
-        $this->auditing('activate', 'active', 0, 1);
+        $this->auditing('activate', 'active', 0, 1, $tags);
     }
 
-    public function inactivateAudit()
+    public function inactivateAudit($tags)
     {
-        $this->auditing('inactivate', 'active', 1, 0);
+        $this->auditing('inactivate', 'active', 1, 0, $tags);
     }
 
-    public function deletedAudit()
+    public function deletedAudit($tags)
     {
-        $this->auditing('deleted', 'deleted', 0, 1);
+        $this->auditing('deleted', 'deleted', 0, 1, $tags);
     }
 
-    public function recoverAudit()
+    public function recoverAudit($tags)
     {
-        $this->auditing('recover', 'deleted', 1, 0);
+        $this->auditing('recover', 'deleted', 1, 0, $tags);
     }
 
-    private function auditing($type, $field, $old, $new)
+    private function auditing($type, $field, $old, $new, $tags)
     {
         $this->audit()->create([
             'user_type' => 'users',
@@ -37,7 +37,7 @@ trait AuditTrait {
             'url' => url()->current() ?? null,
             'ip_address' => request()->ip() ?? null,
             'user_agent' => request()->header('User-Agent') ?? null,
-            'tags' => $this->uuid ?? null
+            'tags' => $tags
         ]);
     }
 }

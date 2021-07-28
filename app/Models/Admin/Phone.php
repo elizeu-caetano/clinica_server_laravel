@@ -16,7 +16,7 @@ class Phone extends Model implements AuditableContract
     public function generateTags(): array
     {
         return [
-            $this->phoneable->uuid
+            'Telefones'
         ];
     }
 

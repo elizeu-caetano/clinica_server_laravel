@@ -142,7 +142,7 @@ class UserRepository implements UserRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->activateAudit();
+            $this->repository->where('uuid', $uuid)->first()->activateAudit('Usuários');
 
             return ['status' => true, 'message' => 'O Usuário foi ativado.'];
         } catch (\Throwable $th) {
@@ -156,7 +156,7 @@ class UserRepository implements UserRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->inactivateAudit();
+            $this->repository->where('uuid', $uuid)->first()->inactivateAudit('Usuários');
 
             return ['status' => true, 'message' => 'O Usuário foi inativado.'];
         } catch (\Throwable $th) {
@@ -170,7 +170,7 @@ class UserRepository implements UserRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->deletedAudit();
+            $this->repository->where('uuid', $uuid)->first()->deletedAudit('Usuários');
 
             return ['status' => true, 'message' => 'O Usuário foi deletado.'];
         } catch (\Throwable $th) {
@@ -184,7 +184,7 @@ class UserRepository implements UserRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->recoverAudit();
+            $this->repository->where('uuid', $uuid)->first()->recoverAudit('Usuários');
 
             return ['status' => true, 'message' => 'O Usuário foi Recuperado.'];
         } catch (\Throwable $th) {

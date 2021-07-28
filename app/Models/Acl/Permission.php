@@ -15,7 +15,7 @@ class Permission extends Model implements AuditableContract
     public function generateTags(): array
     {
         return [
-            $this->uuid ?? $this->id
+            'Permissões'
         ];
     }
 

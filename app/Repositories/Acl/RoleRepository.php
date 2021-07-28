@@ -99,7 +99,7 @@ class RoleRepository implements RoleRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->activateAudit();
+            $this->repository->where('uuid', $uuid)->first()->activateAudit('Papéis');
 
             return ['status' => true, 'message' => 'O Papel foi ativado.'];
         } catch (\Throwable $th) {
@@ -113,7 +113,7 @@ class RoleRepository implements RoleRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->inactivateAudit();
+            $this->repository->where('uuid', $uuid)->first()->inactivateAudit('Papéis');
 
             return ['status' => true, 'message' => 'O Papel foi inativado.'];
         } catch (\Throwable $th) {
@@ -127,7 +127,7 @@ class RoleRepository implements RoleRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->deletedAudit();
+            $this->repository->where('uuid', $uuid)->first()->deletedAudit('Papéis');
 
             return ['status' => true, 'message' => 'O Papel foi deletado.'];
         } catch (\Throwable $th) {
@@ -141,7 +141,7 @@ class RoleRepository implements RoleRepositoryInterface
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->recoverAudit();
+            $this->repository->where('uuid', $uuid)->first()->recoverAudit('Papéis');
 
             return ['status' => true, 'message' => 'O Papel foi recuperado.'];
         } catch (\Throwable $th) {

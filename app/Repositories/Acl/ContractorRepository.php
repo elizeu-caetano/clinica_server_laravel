@@ -134,7 +134,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->activateAudit();
+            $this->repository->where('uuid', $uuid)->first()->activateAudit('Contratantes');
 
             return ['status' => true, 'message' => 'O Contratante foi ativado.'];
 
@@ -149,7 +149,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->inactivateAudit();
+            $this->repository->where('uuid', $uuid)->first()->inactivateAudit('Contratantes');
 
             return ['status' => true, 'message' => 'O Contratante foi inativado.'];
 

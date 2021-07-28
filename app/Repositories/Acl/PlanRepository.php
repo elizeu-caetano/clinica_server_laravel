@@ -93,7 +93,7 @@ class PlanRepository implements PlanRepositoryInterface {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->activateAudit();
+            $this->repository->where('uuid', $uuid)->first()->activateAudit('Planos');
 
             return ['status' => true, 'message' => 'O Plano foi ativado.'];
 
@@ -108,7 +108,7 @@ class PlanRepository implements PlanRepositoryInterface {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->inactivateAudit();
+            $this->repository->where('uuid', $uuid)->first()->inactivateAudit('Planos');
 
             return ['status' => true, 'message' => 'O Plano foi inativado.'];
 

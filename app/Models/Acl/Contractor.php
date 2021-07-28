@@ -5,6 +5,7 @@ namespace App\Models\Acl;
 use App\Models\Admin\Audit;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\AuditTrait;
+use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 
@@ -17,7 +18,7 @@ class Contractor extends Model implements AuditableContract
     public function generateTags(): array
     {
         return [
-            $this->uuid ?? $this->id
+            'Contratantes'
         ];
     }
 
