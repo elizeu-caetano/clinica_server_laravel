@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Acl\ContractorController;
 
-Route::post('', [ContractorController::class, 'store']);
-Route::get('/{uuid}', [ContractorController::class, 'show']);
-Route::put('/{uuid}', [ContractorController::class, 'update']);
-Route::delete('/{uuid}', [ContractorController::class, 'destroy']);
+Route::post('store', [ContractorController::class, 'store']);
+Route::get('show/{uuid}', [ContractorController::class, 'show']);
+Route::put('update/{uuid}', [ContractorController::class, 'update']);
+Route::delete('destroy/{uuid}', [ContractorController::class, 'destroy']);
 Route::post('search', [ContractorController::class, 'search']);
 Route::put('activate/{uuid}', [ContractorController::class, 'activate']);
 Route::put('inactivate/{uuid}', [ContractorController::class, 'inactivate']);

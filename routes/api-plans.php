@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Acl\PlanController;
 
-Route::post('', [PlanController::class, 'store']);
-Route::get('/{uuid}', [PlanController::class, 'show']);
-Route::put('/{uuid}', [PlanController::class, 'update']);
-Route::delete('/{uuid}', [PlanController::class, 'destroy']);
+Route::post('store', [PlanController::class, 'store']);
+Route::get('show/{uuid}', [PlanController::class, 'show']);
+Route::put('update/{uuid}', [PlanController::class, 'update']);
+Route::delete('destroy/{uuid}', [PlanController::class, 'destroy']);
 Route::any('search', [PlanController::class, 'search']);
 Route::put('activate/{uuid}', [PlanController::class, 'activate']);
 Route::put('inactivate/{uuid}', [PlanController::class, 'inactivate']);

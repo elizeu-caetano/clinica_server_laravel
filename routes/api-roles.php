@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Acl\RoleController;
 
-Route::post('', [RoleController::class, 'store']);
-Route::get('/{uuid}', [RoleController::class, 'show']);
-Route::put('/{uuid}', [RoleController::class, 'update']);
-Route::delete('/{uuid}', [RoleController::class, 'destroy']);
+Route::post('store', [RoleController::class, 'store']);
+Route::get('show/{uuid}', [RoleController::class, 'show']);
+Route::put('update/{uuid}', [RoleController::class, 'update']);
+Route::delete('destroy/{uuid}', [RoleController::class, 'destroy']);
 Route::any('search', [RoleController::class, 'search']);
 Route::put('activate/{uuid}', [RoleController::class, 'activate']);
 Route::put('inactivate/{uuid}', [RoleController::class, 'inactivate']);
