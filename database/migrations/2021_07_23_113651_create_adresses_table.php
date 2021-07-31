@@ -13,7 +13,7 @@ class CreateAdressesTable extends Migration
      */
     public function up()
     {
-        Schema::create('adresses', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->string('type', 40);
             $table->string('street');
@@ -27,7 +27,7 @@ class CreateAdressesTable extends Migration
             $table->string('city_ibge', 20)->nullable();
             $table->string('state_ibge', 20)->nullable();
             $table->boolean('deleted')->default(false);
-            $table->morphs('emailble');
+            $table->morphs('addressable');
             $table->timestamps();
         });
     }
@@ -39,6 +39,6 @@ class CreateAdressesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('adresses');
+        Schema::dropIfExists('addresses');
     }
 }
