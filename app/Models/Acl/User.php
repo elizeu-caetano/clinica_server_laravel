@@ -3,6 +3,7 @@
 namespace App\Models\Acl;
 
 use App\Models\Admin\Audit;
+use App\Models\Admin\Company;
 use App\Traits\UserAclTrait;
 use App\Models\Admin\Phone;
 use App\Traits\AuditTrait;
@@ -58,6 +59,11 @@ class User extends Authenticatable implements AuditableContract
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class);
     }
 
     public function phones()

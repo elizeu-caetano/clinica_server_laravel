@@ -20,6 +20,14 @@ use App\Repositories\Acl\{
     UserRepository
 };
 
+use App\Repositories\Admin\{
+    CompanyRepository
+};
+
+use App\Repositories\Admin\Contracts\{
+    CompanyRepositoryInterface
+};
+
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -32,6 +40,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(AuthUserRepositoryInterface::class, AuthUserRepository::class);
+        $this->app->bind(CompanyRepositoryInterface::class, CompanyRepository::class);
         $this->app->bind(ContractorRepositoryInterface::class, ContractorRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(PlanRepositoryInterface::class, PlanRepository::class);

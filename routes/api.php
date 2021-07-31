@@ -12,6 +12,8 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
 
     Route::post('/logout', [AuthUserController::class, 'logout']);
 
+    Route::prefix('companies')->group(base_path('routes/api-companies.php'));
+
     Route::prefix('contractors')->group(base_path('routes/api-contractors.php'));
 
     Route::prefix('permissions')->group(base_path('routes/api-permissions.php'));
