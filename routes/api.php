@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Acl\AuthUserController;
+use App\Http\Controllers\Admin\CepController;
 use App\Http\Controllers\Admin\SearchCompanyRf;
 
 Route::post('/auth', [AuthUserController::class, 'auth']);
@@ -14,6 +15,8 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthUserController::class, 'logout']);
 
     Route::get('/search-company-cnpj/{cnpj}', [SearchCompanyRf::class, 'getCompanyByCnpj']);
+
+    Route::get('/search-address/{cep}', [CepController::class, 'getAddress']);
 
     Route::prefix('companies')->group(base_path('routes/api-companies.php'));
 
