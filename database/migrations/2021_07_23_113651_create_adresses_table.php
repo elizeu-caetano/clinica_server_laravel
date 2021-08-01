@@ -23,7 +23,7 @@ class CreateAdressesTable extends Migration
             $table->string('district');
             $table->string('city');
             $table->char('state', 2);
-            $table->string('country', 100);
+            $table->string('country', 100)->default('Brasil');
             $table->string('city_ibge', 20)->nullable();
             $table->string('state_ibge', 20)->nullable();
             $table->boolean('deleted')->default(false);
