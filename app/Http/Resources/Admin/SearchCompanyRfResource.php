@@ -20,6 +20,8 @@ class SearchCompanyRfResource extends JsonResource
             'name' => $this['name'] . ' - ' . $this['size'],
             'fantasy_name' => Str::title($this['alias']),
             'cpf_cnpj' => $this->maskCnpj($this['tax_id']),
+            'phone' => $this['phone'],
+            'email' => $this['email'],
             'state_registration' => $this['sintegra']['home_state_registration'] ?? 'ISENTO',
             'address' => new AddressRfResource($this['address'])
         ];

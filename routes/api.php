@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Acl\AuthUserController;
 use App\Http\Controllers\Admin\CepController;
-use App\Http\Controllers\Admin\SearchCompanyRf;
+use App\Http\Controllers\Admin\SearchCompanyRfController;
 
 Route::post('/auth', [AuthUserController::class, 'auth']);
 Route::get('/auth/user-email-confirmation/{uuid}/{token}', [AuthUserController::class, 'emailConfirmation']);
@@ -14,7 +14,7 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
 
     Route::post('/logout', [AuthUserController::class, 'logout']);
 
-    Route::get('/search-company-cnpj/{cnpj}', [SearchCompanyRf::class, 'getCompanyByCnpj']);
+    Route::get('/search-company-cnpj/{cnpj}', [SearchCompanyRfController::class, 'getCompanyByCnpj']);
 
     Route::get('/search-address/{cep}', [CepController::class, 'getAddress']);
 
