@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'contractor' => new ContractorResource($this->contractor),
             'active' => $this->active ? 'Sim' : 'Não',
             'deleted' => $this->deleted ? 'Sim' : 'Não',
-            'cell' => $this->phones()->where('type', 'Celular')->first()->phone,
+            'cell' => $this->phones()->where('type', 'Celular')->first()->phone ?? null,
             'created_at' => Carbon::make($this->created_at)->format('d/m/Y H:i:s'),
         ];
     }
