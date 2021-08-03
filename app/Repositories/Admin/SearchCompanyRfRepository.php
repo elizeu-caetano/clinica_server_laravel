@@ -13,7 +13,7 @@ class SearchCompanyRfRepository implements SearchCompanyRfRepositoryInterface
     {
         try {
             $result = Http::withHeaders([
-                'Authorization' => env('CNPJ_JA_KEY'), //'319b2a45-2d32-40f1-9944-0a830440bc5c-27c544b3-bd21-476f-8e61-2b44884852d7',
+                'Authorization' => env('CNPJ_JA_KEY'),
             ])->get('https://api.cnpja.com.br/companies/' . $cnpj);
 
             if (isset($result->json()['error'])) {
