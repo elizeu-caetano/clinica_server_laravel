@@ -15,6 +15,7 @@ class SearchCompanyRfController extends Controller
 
     public function getCompanyByCnpj($cnpj)
     {
+        return $cnpj;
         return $this->repository->getCompanyByCnpj($cnpj);
     }
 }
