@@ -28,7 +28,7 @@ class CompanyRequest extends FormRequest
             'pay_day' => ['required'],
             'phone' => ['required', 'telefone_com_ddd'],
             'phone_cell' => ['required', 'celular_com_ddd'],
-            'email_main' => ['required', 'email']
+            'email' => ['required', 'email']
         ];
 
         return $roles;
@@ -52,8 +52,8 @@ class CompanyRequest extends FormRequest
             'phone.telefone_com_ddd' => 'O Telefone é inválido.',
             'phone_cell.required' => 'O Celular é obrigatório.',
             'phone_cell.celular_com_ddd' => 'O Celular é inválido.',
-            'email_main.required' => 'O Email é obrigatório.',
-            'email_main.email' => 'O Email é inválido.'
+            'email.required' => 'O Email é obrigatório.',
+            'email.email' => 'O Email é inválido.'
         ];
     }
 

@@ -55,13 +55,12 @@ class CompanyRepository implements CompanyRepositoryInterface
 
             $company = $this->repository->create($data);
 
-
             $company->phones()->create(['type' => 'Fixo', 'phone' => $request->phone]);
             $company->phones()->create(['type' => 'Celular', 'phone' => $request->phone_cell]);
 
-            $company->emails()->create(['type' => 'Principal', 'email' => $request->email_main]);
+            $company->emails()->create(['type' => 'Principal', 'email' => $request->email]);
 
-            $company->addresses()->create($request->address);
+            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $request->address);
 
 
             return ['status' => true, 'message' => 'A Empresa foi cadastrada.', 'data' => new CompanyResource($company)];
@@ -92,10 +91,17 @@ class CompanyRepository implements CompanyRepositoryInterface
     {
         try {
 
-            $data = $request->except(['phone', 'active', 'deleted', 'created_at']);
+            $data = $request->except(['logo', 'active', 'deleted', 'created_at']);
 
             $company = $this->repository->where('uuid', $request->uuid)->first();
             $company->update($data);
+
+            $company->phones()->updateOrCreate(['type' => 'Fixo'], ['phone' => $request->phone]);
+            $company->phones()->updateOrCreate(['type' => 'Celular'], ['phone' => $request->phone_cell]);
+
+            $company->emails()->updateOrCreate(['type' => 'Principal'], ['email' => $request->email]);
+
+            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $request->address);
 
             return ['status' => true, 'data' => new CompanyResource($company), 'message' => 'A Empresa foi editada.'];
         } catch (\Throwable $th) {

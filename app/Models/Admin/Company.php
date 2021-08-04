@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
+use App\Traits\AuditTrait;
 
 class Company extends Model implements AuditableContract
 {
-    use HasFactory, Auditable;
+    use HasFactory, Auditable, AuditTrait;
 
     protected $fillable = ['uuid', 'name', 'fantasy_name', 'cpf_cnpj', 'state_registration', 'type_person', 'active', 'deleted',
                             'closing_day', 'pay_day', 'logo', 'contractor_id'];
