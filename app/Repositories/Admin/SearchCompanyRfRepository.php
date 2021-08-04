@@ -11,6 +11,7 @@ class SearchCompanyRfRepository implements SearchCompanyRfRepositoryInterface
 
     public function getCompanyByCnpj($cnpj)
     {
+        return 'Ok';
         try {
             $result = Http::withHeaders([
                 'Authorization' => env('CNPJ_JA_KEY'),
