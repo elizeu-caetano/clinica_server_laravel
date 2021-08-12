@@ -24,6 +24,10 @@ interface UserRepositoryInterface {
 
     public function destroy($uuid);
 
+    public function attachCompany($request);
+
+    public function detachCompany($request);
+
     public function profile();
 
     public function profileUpdate($request);

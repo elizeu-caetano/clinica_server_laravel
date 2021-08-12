@@ -12,3 +12,4 @@ Route::put('activate/{uuid}', [CompanyController::class, 'activate']);
 Route::put('inactivate/{uuid}', [CompanyController::class, 'inactivate']);
 Route::put('deleted/{uuid}', [CompanyController::class, 'deleted']);
 Route::put('recover/{uuid}', [CompanyController::class, 'recover']);
+Route::get('user/{uuid}', [CompanyController::class, 'companiesUser']);

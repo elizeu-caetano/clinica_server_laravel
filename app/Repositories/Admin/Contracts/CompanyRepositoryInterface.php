@@ -22,4 +22,5 @@ interface CompanyRepositoryInterface {
 
     public function destroy($uuid);
 
+    public function companiesUser($uuid);
 }

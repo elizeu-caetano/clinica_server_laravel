@@ -79,4 +79,13 @@ class CompanyController extends Controller
 
         return $this->repository->destroy($uuid);
     }
+
+    public function companiesUser($uuid)
+    {
+        if(Gate::none(['add_company_user', 'remove_company_user'])){
+            abort(403);
+        }
+
+        return $this->repository->companiesUser($uuid);
+    }
 }

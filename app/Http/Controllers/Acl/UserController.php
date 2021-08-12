@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     private $repository;
 
-    public function __construct(UserRepositoryInterface $repository, Request $request)
+    public function __construct(UserRepositoryInterface $repository)
     {
        $this->repository = $repository;
     }
@@ -87,6 +87,22 @@ class UserController extends Controller
         Gate::authorize('destroy_user');
 
         return $this->repository->destroy($uuid);
+    }
+
+    public function attachCompany(Request $request)
+    {
+
+       Gate::authorize('add_company_user');
+
+        return $this->repository->attachCompany($request);
+    }
+
+    public function detachCompany(Request $request)
+    {
+
+       Gate::authorize('remove_company_user');
+
+        return $this->repository->detachCompany($request);
     }
 
     public function profile()

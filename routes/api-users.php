@@ -13,6 +13,8 @@ Route::put('inactivate/{uuid}', [UserController::class, 'inactivate']);
 Route::put('deleted/{uuid}', [UserController::class, 'deleted']);
 Route::put('recover/{uuid}', [UserController::class, 'recover']);
 Route::any('store-admin', [UserController::class, 'storeAdmin']);
+Route::post('attach-company', [UserController::class, 'attachCompany']);
+Route::post('detach-company', [UserController::class, 'detachCompany']);
 Route::get('profile', [UserController::class, 'profile']);
 Route::put('profile-update', [UserController::class, 'profileUpdate']);
 Route::put('profile-update-password', [UserController::class, 'updatePassword']);

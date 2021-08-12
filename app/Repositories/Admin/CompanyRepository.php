@@ -3,6 +3,7 @@
 namespace App\Repositories\Admin;
 
 use App\Http\Resources\Admin\CompanyResource;
+use App\Models\Acl\User;
 use App\Models\Admin\Company;
 use App\Repositories\Admin\Contracts\CompanyRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -171,12 +172,34 @@ class CompanyRepository implements CompanyRepositoryInterface
         try {
             $company = $this->repository->where('uuid', $uuid)->first();
 
-            $company->users()->detach();
+            $company->users()->delete();
+            $company->phones()->delete();
+            $company->emails()->delete();
+            $company->addresses()->delete();
             $company->delete();
 
             return ['status' => true, 'message' => 'A Empresa foi excluída.'];
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'A Empresa não foi excluída.', 'error' => $th->getMessage()];
+        }
+    }
+
+
+    public function companiesUser($uuid)
+    {
+        try {
+            $user = User::where('uuid', $uuid)->first();
+            $companies = $user->companies()->where('active', true)->where('deleted', false)->get();
+            $notCompanies = Company::where('active', true)->where('deleted', false)->whereNotIn('id', $companies->pluck('id'));
+
+            if (Auth::user()->contractor_id != 1) {
+                $companies = $companies->where('contractor_id', Auth::user()->contractor_id);
+                $notCompanies = $notCompanies->where('contractor_id', Auth::user()->contractor_id);
+            }
+
+            return ['status' => true, 'companies' => CompanyResource::collection($companies), 'notCompanies' => $notCompanies->get()];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Empresa não foi adicionada', 'error' => $th->getMessage()];
         }
     }
 }

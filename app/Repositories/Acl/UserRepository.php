@@ -4,6 +4,7 @@ namespace App\Repositories\Acl;
 
 use App\Events\NewUser;
 use App\Http\Resources\Acl\UserResource;
+use App\Http\Resources\Admin\CompanyResource;
 use App\Models\Acl\User;
 use App\Repositories\Acl\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -206,6 +207,34 @@ class UserRepository implements UserRepositoryInterface
             return ['status' => true, 'message' => 'O Usuário foi excluído.'];
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'O Usuário não foi excluído', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function attachCompany($request)
+    {
+        try {
+            $user = User::where('uuid', $request->user)->first();
+            $user->companies()->attach($request->company);
+
+            $companies = $user->companies()->get();
+
+            return ['status' => true, 'message' => 'A Empresa foi adicionada.', 'data' => CompanyResource::collection($companies)];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Empresa não foi adicionada', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function detachCompany($request)
+    {
+        try {
+            $user = User::where('uuid', $request->userUuid)->first();
+            $user->companies()->detach($request->companyId);
+
+            $companies = $user->companies()->get();
+
+            return ['status' => true, 'message' => 'A Empresa foi adicionada.', 'data' => CompanyResource::collection($companies)];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Empresa não foi adicionada', 'error' => $th->getMessage()];
         }
     }
 
