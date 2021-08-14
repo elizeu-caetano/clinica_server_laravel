@@ -20,7 +20,7 @@ class CreateProceduresTable extends Migration
             $table->decimal('price', 10, 2)->default(0);
             $table->decimal('commission', 10, 2)->default(0);
             $table->decimal('material', 10, 2)->default(0);
-            $table->boolean('is_percentage')->default(true);
+            $table->boolean('is_percentage')->default(false);
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
             $table->boolean('is_print')->default(true);
