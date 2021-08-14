@@ -26,6 +26,7 @@ class CreateProceduresTable extends Migration
             $table->boolean('is_print')->default(true);
             $table->foreignId('procedure_group_id')->constrained();
             $table->foreignId('contractor_id')->constrained();
+            $table->timestamps();
         });
     }
 
