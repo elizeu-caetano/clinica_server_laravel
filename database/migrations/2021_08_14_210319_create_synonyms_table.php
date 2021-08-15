@@ -19,7 +19,7 @@ class CreateSynonymsTable extends Migration
             $table->string('name', 100);
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
-            $table->foreignId('m_occupation_id')->constrained();
+            $table->foreignId('default_occupation_id')->constrained();
             $table->timestamps();
         });
     }

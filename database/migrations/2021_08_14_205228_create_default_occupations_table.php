@@ -13,7 +13,7 @@ class CreateDefaultOccupationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('m_occupations', function (Blueprint $table) {
+        Schema::create('default_occupations', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
             $table->string('name', 100);
@@ -31,6 +31,6 @@ class CreateDefaultOccupationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_occupations');
+        Schema::dropIfExists('default_occupations');
     }
 }

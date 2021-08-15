@@ -13,11 +13,11 @@ class CreateDefaultOccupationProcedureTable extends Migration
      */
     public function up()
     {
-        Schema::create('m_occupation_procedure', function (Blueprint $table) {
-            $table->foreignId('m_occupation_id')->constrained();
+        Schema::create('default_occupation_procedure', function (Blueprint $table) {
+            $table->foreignId('default_occupation_id')->constrained();
             $table->foreignId('procedure_id')->constrained();
 
-            $table->primary(['m_occupation_id', 'procedure_id']);
+            $table->primary(['default_occupation_id', 'procedure_id'], 'custom_index');
         });
     }
 
@@ -28,6 +28,6 @@ class CreateDefaultOccupationProcedureTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_occupation_procedure');
+        Schema::dropIfExists('default_occupation_procedure');
     }
 }
