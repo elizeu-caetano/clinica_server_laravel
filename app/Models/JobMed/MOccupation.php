@@ -8,7 +8,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use App\Traits\AuditTrait;
 
-class DefaultOccupation extends Model implements AuditableContract
+class MOccupation extends Model implements AuditableContract
 {
     use HasFactory, Auditable, AuditTrait;
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSynonymsTable extends Migration
+class CreateDangerMOccupationTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateSynonymsTable extends Migration
      */
     public function up()
     {
-        Schema::create('synonyms', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid');
-            $table->string('name', 100);
-            $table->boolean('active')->default(true);
-            $table->boolean('deleted')->default(false);
+        Schema::create('danger_m_occupation', function (Blueprint $table) {
+            $table->foreignId('danger_id')->constrained();
             $table->foreignId('m_occupation_id')->constrained();
-            $table->timestamps();
+
+            $table->primary(['danger_id', 'm_occupation_id']);
         });
     }
 
@@ -31,6 +28,6 @@ class CreateSynonymsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('synonyms');
+        Schema::dropIfExists('danger_m_occupation');
     }
 }
