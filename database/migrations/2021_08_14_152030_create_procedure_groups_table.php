@@ -18,6 +18,7 @@ class CreateProcedureGroupsTable extends Migration
             $table->uuid('uuid');
             $table->string('name', 100);
             $table->boolean('deleted')->default(false);
+            $table->foreignId('contractor_id')->constrained();
             $table->timestamps();
         });
     }
