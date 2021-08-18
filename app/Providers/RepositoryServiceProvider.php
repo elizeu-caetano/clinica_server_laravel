@@ -21,11 +21,13 @@ use App\Repositories\Acl\{
 };
 
 use App\Repositories\Admin\{
-    CompanyRepository
+    CompanyRepository,
+    ProcedureGroupRepository
 };
 
 use App\Repositories\Admin\Contracts\{
-    CompanyRepositoryInterface
+    CompanyRepositoryInterface,
+    ProcedureGroupRepositoryInterface
 };
 
 use Illuminate\Support\ServiceProvider;
@@ -43,6 +45,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CompanyRepositoryInterface::class, CompanyRepository::class);
         $this->app->bind(ContractorRepositoryInterface::class, ContractorRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
+        $this->app->bind(ProcedureGroupRepositoryInterface::class, ProcedureGroupRepository::class);
         $this->app->bind(PlanRepositoryInterface::class, PlanRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);

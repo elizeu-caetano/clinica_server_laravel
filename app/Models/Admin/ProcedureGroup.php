@@ -12,12 +12,12 @@ class ProcedureGroup extends Model implements AuditableContract
 {
     use HasFactory, Auditable, AuditTrait;
 
-    protected $fillable = ['uuid', 'name', 'deleted'];
+    protected $fillable = ['uuid', 'name', 'deleted', 'contractor_id'];
 
     public function generateTags(): array
     {
         return [
-            'Grupos de Procedimentos'
+            'Grupo de Procedimentos'
         ];
     }
 

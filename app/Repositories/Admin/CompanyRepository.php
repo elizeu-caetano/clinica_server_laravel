@@ -33,14 +33,13 @@ class CompanyRepository implements CompanyRepositoryInterface
                     ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");
                 })
                 ->orderBy('contractor_id')
-                ->orderBy('name')
-                ->get();
+                ->orderBy('name');
 
             if (Auth::user()->contractor_id != 1) {
                 $companies = $companies->where('contractor_id', Auth::user()->contractor_id);
             }
 
-            return ['status' => true, 'data' => CompanyResource::collection($companies)];
+            return ['status' => true, 'data' => CompanyResource::collection($companies->get())];
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'Não foi possível carregar os dados.', 'error' => $th->getMessage()];
