@@ -3,31 +3,31 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Admin\Contracts\AuditRepositoryInterface;
+use App\Services\Admin\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class AuditController extends Controller
 {
-    private $repository;
+    protected $service;
 
-    public function __construct(AuditRepositoryInterface $repository)
+    public function __construct(AuditService $service)
     {
-       $this->repository = $repository;
+        $this->service = $service;
     }
 
     public function search(Request $request)
     {
         Gate::authorize('search_audit');
 
-        return $this->repository->search($request);
+        return $this->service->search($request);
     }
 
     public function show($id)
     {
         Gate::authorize('show_audit');
 
-        return $this->repository->show($id);
+        return $this->service->show($id);
     }
 
 }

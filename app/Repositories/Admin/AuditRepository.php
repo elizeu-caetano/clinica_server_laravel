@@ -5,34 +5,23 @@ namespace App\Repositories\Admin;
 use App\Http\Resources\Admin\AuditResource;
 use App\Models\Admin\Audit;
 use App\Repositories\Admin\Contracts\AuditRepositoryInterface;
-use Carbon\Carbon;
 
 class AuditRepository implements AuditRepositoryInterface
 {
-    private $repository;
+    protected $entity;
 
     public function __construct(Audit $model)
     {
-        $this->repository = $model;
+        $this->entity = $model;
     }
 
-    public function search($request)
+    public function search($data)
     {
         try {
-            if ($request->date) {
-                $startDate  = isset(explode(' ', $request->date)[0]) ? explode(' ', $request->date)[0] : $request->date;
-                $endDate  = isset(explode(' ', $request->date)[2]) ? explode(' ', $request->date)[2] : $request->date;
-            } else {
-                $startDate  = date("Y-m-01");
-                $endDate  = date("Y-m-d");
-            }
-
-            $search = $request->search;
-
-            $audits =  $this->repository->with('auditable')
-                        ->whereDate('created_at', '>=', $startDate)
-                        ->whereDate('created_at', '<=', $endDate)
-                        ->where('tags', 'LIKE', "%{$search}%")
+            $audits =  $this->entity->with('auditable')
+                        ->whereDate('created_at', '>=', $data->startDate)
+                        ->whereDate('created_at', '<=', $data->endDate)
+                        ->where('tags', 'LIKE', "%{$data->search}%")
                         ->orderBy('created_at', 'desc')->get();
 
             return ['status' => true, 'data' => AuditResource::collection($audits)];
@@ -46,7 +35,7 @@ class AuditRepository implements AuditRepositoryInterface
     public function show($id)
     {
         try {
-            $entity =  $this->repository->find($id);
+            $entity =  $this->entity->find($id);
 
             return ['status' => true, 'data' => new AuditResource($entity)];
         } catch (\Throwable $th) {
