@@ -113,7 +113,7 @@ class UserRepository implements UserRepositoryInterface
     public function update($request)
     {
         try {
-            $data = $request->except(['deleted', 'created_at']);
+            $data = $request->except(['deleted', 'created_at', 'photo']);
 
             $user = $this->repository->where('uuid', $request->uuid)->first();
             $phone = $user->phones->where('type', 'celular')->first();

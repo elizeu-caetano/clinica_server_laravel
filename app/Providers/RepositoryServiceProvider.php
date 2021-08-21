@@ -21,11 +21,13 @@ use App\Repositories\Acl\{
 };
 
 use App\Repositories\Admin\{
+    AuditRepository,
     CompanyRepository,
     ProcedureGroupRepository
 };
 
 use App\Repositories\Admin\Contracts\{
+    AuditRepositoryInterface,
     CompanyRepositoryInterface,
     ProcedureGroupRepositoryInterface
 };
@@ -41,6 +43,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->bind(AuditRepositoryInterface::class, AuditRepository::class);
         $this->app->bind(AuthUserRepositoryInterface::class, AuthUserRepository::class);
         $this->app->bind(CompanyRepositoryInterface::class, CompanyRepository::class);
         $this->app->bind(ContractorRepositoryInterface::class, ContractorRepository::class);

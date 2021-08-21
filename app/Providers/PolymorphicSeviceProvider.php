@@ -32,7 +32,9 @@ class PolymorphicSeviceProvider extends ServiceProvider
             'roles' => 'App\Models\Acl\Role',
             'phones' => 'App\Models\Admin\Phone',
             'emails' => 'App\Models\Admin\Email',
-            'companies' => 'App\Models\Admin\Company'
+            'companies' => 'App\Models\Admin\Company',
+            'procedure_groups' => 'App\Models\Admin\ProcedureGroup',
+            'addresses' => 'App\Models\Admin\Address'
         ]);
     }
 }

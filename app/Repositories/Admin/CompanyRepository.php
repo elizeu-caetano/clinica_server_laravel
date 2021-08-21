@@ -26,14 +26,14 @@ class CompanyRepository implements CompanyRepositoryInterface
             $search = $request->search;
 
             $companies = $this->repository->where('active', $active)
-                ->where('deleted', false)
-                ->where(function ($query) use ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('fantasy_name', 'LIKE', "%{$search}%")
-                    ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");
-                })
-                ->orderBy('contractor_id')
-                ->orderBy('name');
+                        ->where('deleted', false)
+                        ->where(function ($query) use ($search) {
+                            $query->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('fantasy_name', 'LIKE', "%{$search}%")
+                            ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");
+                        })
+                        ->orderBy('contractor_id')
+                        ->orderBy('name');
 
             if (Auth::user()->contractor_id != 1) {
                 $companies = $companies->where('contractor_id', Auth::user()->contractor_id);

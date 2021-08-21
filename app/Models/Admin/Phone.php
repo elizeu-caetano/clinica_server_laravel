@@ -13,6 +13,7 @@ class Phone extends Model implements AuditableContract
 
     protected $fillable = ['phone', 'type', 'deleted', 'is_whatsapp', 'phoneable_type', 'phoneable_id'];
 
+
     public function generateTags(): array
     {
         return [
@@ -23,5 +24,10 @@ class Phone extends Model implements AuditableContract
     public function phoneable()
     {
         return $this->morphTo();
+    }
+
+    public function audit()
+    {
+        return $this->morphMany(Audit::class, 'auditable');
     }
 }
