@@ -4,7 +4,7 @@ namespace App\Repositories\Admin\Contracts;
 
 interface AuditRepositoryInterface {
 
-    public function search($request);
+    public function search(array $request);
 
-    public function show($id);
+    public function show(int $id);
 }

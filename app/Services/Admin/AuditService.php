@@ -13,22 +13,21 @@ class AuditService
         $this->repository = $interface;
     }
 
-    public function search($data)
+    public function search(object $request)
     {
-        if ($data->date) {
-            $startDate  = isset(explode(' ', $data->date)[0]) ? explode(' ', $data->date)[0] : $data->date;
-            $endDate  = isset(explode(' ', $data->date)[2]) ? explode(' ', $data->date)[2] : $data->date;
+        $data = $request->only(['search']);
+        if ($request->date) {
+            $data['startDate']  = isset(explode(' ', $request->date)[0]) ? explode(' ', $request->date)[0] : $request->date;
+            $data['endDate']  = isset(explode(' ', $request->date)[2]) ? explode(' ', $request->date)[2] : $request->date;
         } else {
-            $startDate  = date("Y-m-01");
-            $endDate  = date("Y-m-d");
+            $data['startDate']  = date("Y-m-01");
+            $data['endDate']  = date("Y-m-d");
         }
-
-        $data = $data->merge(['startDate' => $startDate, 'endDate' => $endDate]);
 
         return $this->repository->search($data);
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         return $this->repository->show($id);
     }

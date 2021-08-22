@@ -15,13 +15,13 @@ class AuditRepository implements AuditRepositoryInterface
         $this->entity = $model;
     }
 
-    public function search($data)
+    public function search(array $data)
     {
         try {
             $audits =  $this->entity->with('auditable')
-                        ->whereDate('created_at', '>=', $data->startDate)
-                        ->whereDate('created_at', '<=', $data->endDate)
-                        ->where('tags', 'LIKE', "%{$data->search}%")
+                        ->whereDate('created_at', '>=', $data['startDate'])
+                        ->whereDate('created_at', '<=', $data['endDate'])
+                        ->where('tags', 'LIKE', '%'.$data['search'].'%')
                         ->orderBy('created_at', 'desc')->get();
 
             return ['status' => true, 'data' => AuditResource::collection($audits)];
@@ -32,7 +32,7 @@ class AuditRepository implements AuditRepositoryInterface
         }
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         try {
             $entity =  $this->entity->find($id);
