@@ -4,17 +4,17 @@ namespace App\Repositories\Admin\Contracts;
 
 interface ProcedureGroupRepositoryInterface {
 
-    public function search($request);
+    public function search(array $request);
 
-    public function store($request);
+    public function store(array $request);
 
-    public function show($uuid);
+    public function show(string $uuid);
 
-    public function update($request);
+    public function update(array $request);
 
-    public function deleted($uuid);
+    public function deleted(string $uuid);
 
-    public function recover($uuid);
+    public function recover(string $uuid);
 
-    public function destroy($uuid);
+    public function destroy(string $uuid);
 }

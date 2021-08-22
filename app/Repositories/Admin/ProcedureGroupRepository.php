@@ -17,17 +17,17 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         $this->repository = $model;
     }
 
-    public function search($request)
+    public function search(array $data)
     {
         try {
-
-            $search = $request->search;
-
-            $prodedureGroups = $this->repository->where('deleted', false)->where('name', 'LIKE', "%{$search}%")->orderBy('name');
-
-            if (Auth::user()->contractor_id != 1) {
-                $prodedureGroups = $prodedureGroups->where('contractor_id', Auth::user()->contractor_id);
-            }
+            $prodedureGroups = $this->repository->where('deleted', false)
+                                ->where('name', 'LIKE', '%'.$data['search'].'%')
+                                ->where(function ($query){
+                                    if ((Auth::user()->contractor_id != 1)) {
+                                        $query->where('contractor_id', Auth::user()->contractor_id);
+                                    }
+                                })
+                                ->orderBy('name');
 
             return ['status' => true, 'data' => ProcedureGroupResource::collection($prodedureGroups->get())];
         } catch (\Throwable $th) {
@@ -36,12 +36,9 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         }
     }
 
-    public function store($request)
+    public function store(array $data)
     {
         try {
-            $data = $request->all();
-            $data['uuid'] = Str::uuid();
-            $data['contractor_id'] = Auth::user()->contractor_id;
 
             $procedureGroup = $this->repository->create($data);
 
@@ -51,7 +48,7 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         }
     }
 
-    public function show($uuid)
+    public function show(string $uuid)
     {
         try {
             $procedureGroup = $this->repository->where('uuid', $uuid)->first();
@@ -63,13 +60,11 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
 
-            $data = $request->except(['deleted', 'created_at']);
-
-            $procedureGroup = $this->repository->where('uuid', $request->uuid)->first();
+            $procedureGroup = $this->repository->where('uuid', $data['uuid'])->first();
             $procedureGroup->update($data);
 
             return ['status' => true, 'data' => new ProcedureGroupResource($procedureGroup), 'message' => 'O Grupo de Procedimento foi editado.'];
@@ -79,7 +74,7 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         }
     }
 
-    public function deleted($uuid)
+    public function deleted(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => true]);
@@ -93,7 +88,7 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         }
     }
 
-    public function recover($uuid)
+    public function recover(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => false]);
@@ -107,7 +102,7 @@ class ProcedureGroupRepository implements ProcedureGroupRepositoryInterface
         }
     }
 
-    public function destroy($uuid)
+    public function destroy(string $uuid)
     {
         try {
             $procedureGroup = $this->repository->where('uuid', $uuid)->first();
