@@ -7,7 +7,6 @@ use App\Models\Acl\User;
 use App\Models\Admin\Company;
 use App\Repositories\Admin\Contracts\CompanyRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class CompanyRepository implements CompanyRepositoryInterface
 {
@@ -18,26 +17,23 @@ class CompanyRepository implements CompanyRepositoryInterface
         $this->repository = $company;
     }
 
-    public function search($request)
+    public function search(array $data)
     {
         try {
-
-            $active = !$request->active ? false : true;
-            $search = $request->search;
-
-            $companies = $this->repository->where('active', $active)
+            $companies = $this->repository->where('active', $data['active'])
                         ->where('deleted', false)
-                        ->where(function ($query) use ($search) {
-                            $query->where('name', 'LIKE', "%{$search}%")
-                            ->orWhere('fantasy_name', 'LIKE', "%{$search}%")
-                            ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");
+                        ->where(function ($query) {
+                            if (Auth::user()->contractor_id != 1) {
+                                $query->where('contractor_id', Auth::user()->contractor_id);
+                            }
+                        })
+                        ->where(function ($query) use ($data) {
+                                $query->where('name', 'LIKE', '%'.$data['search'].'%')
+                                ->orWhere('fantasy_name', 'LIKE', '%'.$data['search'].'%')
+                                ->orWhere('cpf_cnpj', 'LIKE', '%'.$data['search'].'%');
                         })
                         ->orderBy('contractor_id')
                         ->orderBy('name');
-
-            if (Auth::user()->contractor_id != 1) {
-                $companies = $companies->where('contractor_id', Auth::user()->contractor_id);
-            }
 
             return ['status' => true, 'data' => CompanyResource::collection($companies->get())];
         } catch (\Throwable $th) {
@@ -46,21 +42,17 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function store($request)
+    public function store(array $data)
     {
         try {
-            $data = $request->all();
-            $data['uuid'] = Str::uuid();
-            $data['contractor_id'] = $request->contractor_id ? $request->contractor_id : Auth::user()->contractor_id;
-
             $company = $this->repository->create($data);
 
-            $company->phones()->create(['type' => 'Fixo', 'phone' => $request->phone]);
-            $company->phones()->create(['type' => 'Celular', 'phone' => $request->phone_cell]);
+            $company->phones()->create(['type' => 'Fixo', 'phone' => $data['phone']]);
+            $company->phones()->create(['type' => 'Celular', 'phone' => $data['phone_cell']]);
 
-            $company->emails()->create(['type' => 'Principal', 'email' => $request->email]);
+            $company->emails()->create(['type' => 'Principal', 'email' => $data['email']]);
 
-            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $request->address);
+            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $data['address']);
 
 
             return ['status' => true, 'message' => 'A Empresa foi cadastrada.', 'data' => new CompanyResource($company)];
@@ -74,7 +66,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function show($uuid)
+    public function show(string $uuid)
     {
         try {
 
@@ -87,21 +79,18 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
-
-            $data = $request->except(['logo', 'active', 'deleted', 'created_at']);
-
-            $company = $this->repository->where('uuid', $request->uuid)->first();
+            $company = $this->repository->where('uuid', $data['uuid'])->first();
             $company->update($data);
 
-            $company->phones()->updateOrCreate(['type' => 'Fixo'], ['phone' => $request->phone]);
-            $company->phones()->updateOrCreate(['type' => 'Celular'], ['phone' => $request->phone_cell]);
+            $company->phones()->updateOrCreate(['type' => 'Fixo'], ['phone' => $data['phone']]);
+            $company->phones()->updateOrCreate(['type' => 'Celular'], ['phone' => $data['phone_cell']]);
 
-            $company->emails()->updateOrCreate(['type' => 'Principal'], ['email' => $request->email]);
+            $company->emails()->updateOrCreate(['type' => 'Principal'], ['email' => $data['email']]);
 
-            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $request->address);
+            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $data['address']);
 
             return ['status' => true, 'data' => new CompanyResource($company), 'message' => 'A Empresa foi editada.'];
         } catch (\Throwable $th) {
@@ -110,7 +99,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function activate($uuid)
+    public function activate(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
@@ -124,7 +113,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function inactivate($uuid)
+    public function inactivate(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
@@ -138,7 +127,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function deleted($uuid)
+    public function deleted(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => true]);
@@ -152,7 +141,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function recover($uuid)
+    public function recover(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => false]);
@@ -166,7 +155,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
     }
 
-    public function destroy($uuid)
+    public function destroy(string $uuid)
     {
         try {
             $company = $this->repository->where('uuid', $uuid)->first();
@@ -184,7 +173,7 @@ class CompanyRepository implements CompanyRepositoryInterface
     }
 
 
-    public function companiesUser($uuid)
+    public function companiesUser(string $uuid)
     {
         try {
             $user = User::where('uuid', $uuid)->first();

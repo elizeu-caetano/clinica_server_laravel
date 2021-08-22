@@ -4,23 +4,23 @@ namespace App\Repositories\Admin\Contracts;
 
 interface CompanyRepositoryInterface {
 
-    public function search($request);
+    public function search(array $data);
 
-    public function store($request);
+    public function store(array $data);
 
-    public function show($uuid);
+    public function show(string $uuid);
 
-    public function update($request);
+    public function update(array $data);
 
-    public function activate($uuid);
+    public function activate(string $uuid);
 
-    public function inactivate($uuid);
+    public function inactivate(string $uuid);
 
-    public function deleted($uuid);
+    public function deleted(string $uuid);
 
-    public function recover($uuid);
+    public function recover(string $uuid);
 
-    public function destroy($uuid);
+    public function destroy(string $uuid);
 
-    public function companiesUser($uuid);
+    public function companiesUser(string $uuid);
 }

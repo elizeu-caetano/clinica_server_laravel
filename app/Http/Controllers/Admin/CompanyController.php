@@ -3,38 +3,38 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CompanyRequest;
-use App\Repositories\Admin\Contracts\CompanyRepositoryInterface;
+use App\Services\Admin\CompanyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class CompanyController extends Controller
 {
-    private $repository;
+    private $service;
 
-    public function __construct(CompanyRepositoryInterface $repository)
+    public function __construct(CompanyService $service)
     {
-       $this->repository = $repository;
+       $this->service = $service;
     }
 
     public function search(Request $request)
     {
         Gate::authorize('search_company');
 
-        return $this->repository->search($request);
+        return $this->service->search($request);
     }
 
     public function store(CompanyRequest $request)
     {
         Gate::authorize('store_company');
 
-        return $this->repository->store($request);
+        return $this->service->store($request);
     }
 
     public function show($uuid)
     {
         Gate::authorize('show_company');
 
-        return $this->repository->show($uuid);
+        return $this->service->show($uuid);
     }
 
 
@@ -42,42 +42,42 @@ class CompanyController extends Controller
     {
         Gate::authorize('update_company');
 
-        return $this->repository->update($request);
+        return $this->service->update($request);
     }
 
     public function activate($uuid)
     {
         Gate::authorize('activate_company');
 
-        return $this->repository->activate($uuid);
+        return $this->service->activate($uuid);
     }
 
     public function inactivate($uuid)
     {
         Gate::authorize('inactivate_company');
 
-        return $this->repository->inactivate($uuid);
+        return $this->service->inactivate($uuid);
     }
 
     public function deleted($uuid)
     {
         Gate::authorize('deleted_company');
 
-        return $this->repository->deleted($uuid);
+        return $this->service->deleted($uuid);
     }
 
     public function recover($uuid)
     {
         Gate::authorize('recover_company');
 
-        return $this->repository->recover($uuid);
+        return $this->service->recover($uuid);
     }
 
     public function destroy($uuid)
     {
         Gate::authorize('destroy_company');
 
-        return $this->repository->destroy($uuid);
+        return $this->service->destroy($uuid);
     }
 
     public function companiesUser($uuid)
@@ -86,6 +86,6 @@ class CompanyController extends Controller
             abort(403);
         }
 
-        return $this->repository->companiesUser($uuid);
+        return $this->service->companiesUser($uuid);
     }
 }
