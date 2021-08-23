@@ -20,26 +20,23 @@ class RoleRepository implements RoleRepositoryInterface
         $this->repository = $role;
     }
 
-    public function search($request)
+    public function search(array $data)
     {
         try {
-
-            $active = !$request->active ? false : true;
-            $search = $request->search;
-
-            $roles = $this->repository->where('active', $active)
+            $roles = $this->repository->where('active', $data['active'])
                 ->where('deleted', false)
-                ->where(function ($query) use ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('description', 'LIKE', "%{$search}%");
+                ->where(function ($query) {
+                    if (Auth::user()->contractor_id != 1) {
+                        $query->where('contractor_id', Auth::user()->contractor_id);
+                    }
+                })
+                ->where(function ($query) use ($data) {
+                    $query->where('name', 'LIKE', '%'.$data['search'].'%')
+                        ->orWhere('description', 'LIKE', '%'.$data['search'].'%');
                 })
                 ->orderBy('contractor_id')
                 ->orderBy('name')
                 ->get();
-
-            if (Auth::user()->contractor_id != 1) {
-                $roles = $roles->where('contractor_id', Auth::user()->contractor_id);
-            }
 
             return ['status' => true, 'data' => RoleResource::collection($roles)];
         } catch (\Throwable $th) {
@@ -48,13 +45,9 @@ class RoleRepository implements RoleRepositoryInterface
         }
     }
 
-    public function store($request)
+    public function store(array $data)
     {
         try {
-
-            $data = $request->all();
-            $data['uuid'] = Str::uuid();
-            $data['contractor_id'] = $request->contractor_id ? $request->contractor_id : Auth::user()->contractor_id;
 
             $role = $this->repository->create($data);
 
@@ -68,7 +61,6 @@ class RoleRepository implements RoleRepositoryInterface
     public function show($uuid)
     {
         try {
-
             $role = $this->repository->where('uuid', $uuid)->first();
 
             return ['status' => true, 'data' => new RoleResource($role)];
@@ -78,13 +70,10 @@ class RoleRepository implements RoleRepositoryInterface
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
-
-            $data = $request->except(['admin', 'active', 'deleted', 'created_at']);
-
-            $role = $this->repository->where('uuid', $request->uuid)->first();
+            $role = $this->repository->where('uuid', $data['uuid'])->first();
             $role->update($data);
 
             return ['status' => true, 'data' => new RoleResource($role), 'message' => 'O Papel foi editado.'];
@@ -167,7 +156,7 @@ class RoleRepository implements RoleRepositoryInterface
     public function rolePermissions($uuid)
     {
         try {
-            $role = $this->repository->where('uuid', $uuid)->first();
+            $role = Role::where('uuid', $uuid)->first();
             $permissionsRolesId = $role->permissions()->pluck('id')->toArray();
             $permissionsRole = $role->permissions()->get();
 
@@ -188,13 +177,13 @@ class RoleRepository implements RoleRepositoryInterface
         }
     }
 
-    public function attachPermissions($request)
+    public function attachPermissions(array $data)
     {
         try {
-            $role = $this->repository->where('uuid', $request->uuid)->first();
+            $role = $this->repository->where('uuid', $data['uuid'])->first();
             $rolesId = $role->permissions()->pluck('id');
 
-            $role->permissions()->attach($request->permissions);
+            $role->permissions()->attach($data['permissions']);
 
             $permissionsRole = $role->permissions()->get();
             if (Auth::user()->isSuperAdmin()) {
@@ -207,12 +196,12 @@ class RoleRepository implements RoleRepositoryInterface
         }
     }
 
-    public function detachPermissions($request)
+    public function detachPermissions(array $data)
     {
         try {
-            $role = $this->repository->where('uuid', $request->uuid)->first();
+            $role = $this->repository->where('uuid', $data['uuid'])->first();
 
-            $role->permissions()->detach($request->permissions);
+            $role->permissions()->detach($data['permissions']);
 
             return ['status' => true, 'message' => 'Permissões excluidas.'];
         } catch (\Throwable $th) {
