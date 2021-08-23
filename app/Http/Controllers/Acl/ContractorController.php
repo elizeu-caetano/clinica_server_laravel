@@ -5,45 +5,45 @@ namespace App\Http\Controllers\Acl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\ContractorRequest;
 use App\Http\Requests\ImageRequest;
-use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
+use App\Services\Acl\ContractorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class ContractorController extends Controller
 {
-    private $repository;
+    private $contractService;
 
-    public function __construct(ContractorRepositoryInterface $repository, Request $request)
+    public function __construct(ContractorService $contractService)
     {
-       $this->repository = $repository;
+       $this->contractService = $contractService;
     }
 
     public function index()
     {
         Gate::authorize('store_contractor');
 
-        return $this->repository->index();
+        return $this->contractService->index();
     }
 
     public function search(Request $request)
     {
         Gate::authorize('search_contractor');
 
-        return $this->repository->search($request);
+        return $this->contractService->search($request);
     }
 
     public function store(ContractorRequest $request)
     {
         Gate::authorize('store_contractor');
 
-        return $this->repository->store($request);
+        return $this->contractService->store($request);
     }
 
     public function show($uuid)
     {
         Gate::authorize('show_contractor');
 
-        return $this->repository->show($uuid);
+        return $this->contractService->show($uuid);
     }
 
 
@@ -51,35 +51,35 @@ class ContractorController extends Controller
     {
        Gate::authorize('update_contractor');
 
-        return $this->repository->update($request);
+        return $this->contractService->update($request);
     }
 
     public function activate($uuid)
     {
         Gate::authorize('activate_contractor');
 
-        return $this->repository->activate($uuid);
+        return $this->contractService->activate($uuid);
     }
 
     public function inactivate($uuid)
     {
         Gate::authorize('inactivate_contractor');
 
-        return $this->repository->inactivate($uuid);
+        return $this->contractService->inactivate($uuid);
     }
 
     public function destroy($uuid)
     {
         Gate::authorize('destroy_contractor');
 
-        return $this->repository->destroy($uuid);
+        return $this->contractService->destroy($uuid);
     }
 
     public function uploadLogo(ImageRequest $request)
     {
         Gate::authorize('update_contractor');
 
-        return $this->repository->uploadLogo($request);
+        return $this->contractService->uploadLogo($request);
     }
 
     public function contractorPlans($uuid)
@@ -88,20 +88,20 @@ class ContractorController extends Controller
             abort(403);
         }
 
-        return $this->repository->contractorPlans($uuid);
+        return $this->contractService->contractorPlans($uuid);
     }
 
     public function attachPlans(Request $request)
     {
         Gate::authorize('add_plan_contractor');
 
-        return $this->repository->attachPlans($request);
+        return $this->contractService->attachPlans($request);
     }
 
     public function detachPlans(Request $request)
     {
         Gate::authorize('remove_plan_contractor');
 
-        return $this->repository->detachPlans($request);
+        return $this->contractService->detachPlans($request);
     }
 }

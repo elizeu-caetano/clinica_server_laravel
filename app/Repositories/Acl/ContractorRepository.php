@@ -10,8 +10,6 @@ use App\Models\Acl\Role;
 use App\Repositories\Acl\Contracts\ContractorRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Image;
 
 class ContractorRepository implements ContractorRepositoryInterface {
 
@@ -37,19 +35,15 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function search($request)
+    public function search(array $data)
     {
-
         try {
-            $active = !$request->active ? false : true;
-            $search = $request->search;
-
-            $contractors = $this->repository->where('active', $active)
+            $contractors = $this->repository->where('active', $data['active'])
             ->where('deleted', false)
-            ->where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('fantasy_name', 'LIKE', "%{$search}%")
-                ->orWhere('cpf_cnpj', 'LIKE', "%{$search}%");
+            ->where(function ($query) use ($data) {
+                $query->where('name', 'LIKE', '%'.$data['search'].'%')
+                ->orWhere('fantasy_name', 'LIKE', '%'.$data['search'].'%')
+                ->orWhere('cpf_cnpj', 'LIKE', '%'.$data['search'].'%');
             })->get();
 
             return ['status' => true, 'data' => ContractorResource::collection($contractors)];
@@ -60,18 +54,9 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function store($request)
+    public function store(array $data)
     {
         try {
-
-            $data = $request->all();
-            $data['plan_ids'] = explode(',', $request->plan_ids);
-
-            if ($request->hasFile('logo') && $request->logo->isValid()) {
-                $data['logo'] = $request->file('logo')->storePublicly('logos', 's3');
-            }
-
-            $data['uuid'] = Str::uuid();
             $contractor = $this->repository->create($data);
             $contractor->plans()->attach($data['plan_ids']);
 
@@ -98,7 +83,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
         $role->permissions()->attach($permissions);
     }
 
-    public function show($uuid)
+    public function show(string $uuid)
     {
         try {
             $contractors = $this->repository->where('uuid', $uuid)->with('plans')->first();
@@ -111,13 +96,10 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
-
-            $data = $request->except(['plan_id', 'person', 'active', 'deleted', 'created_at', 'logo']);
-
-            $contractor = $this->repository->where('uuid', $request->uuid)->first();
+            $contractor = $this->repository->where('uuid', $data['uuid'])->first();
 
             $contractor->update($data);
 
@@ -129,7 +111,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function activate($uuid)
+    public function activate(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
@@ -144,7 +126,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function inactivate($uuid)
+    public function inactivate(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
@@ -159,16 +141,20 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function destroy($uuid)
+    public function destroy(string $uuid)
     {
         try {
-            $contractor = $this->repository->where('uuid', $uuid)->first();
+           $contractor = $this->repository->where('uuid', $uuid)->first();
 
             if ($contractor->logo != '') {
                 Storage::disk('s3')->delete($contractor->logo);
             }
 
             $contractor->plans()->detach();
+            $roles = $contractor->roles;
+            foreach ($roles as $role) {
+                $role->permissions()->detach();
+            }
 
             $contractor->delete();
 
@@ -180,19 +166,9 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function uploadLogo($request)
+    public function uploadLogo(object $contractor, string $path)
     {
         try {
-            $contractor = $this->repository->where('uuid', $request->uuid)->first();
-
-            $extension = request()->file('image')->getClientOriginalExtension();
-            $image = Image::make(request()->file('image'))->resize(500,315)->encode($extension);
-            $path = 'logos/'.Str::random(40).'.'.$extension;
-            Storage::disk('s3')->put($path, (string)$image, 'public');
-
-            if ($contractor->logo != '') {
-                Storage::disk('s3')->delete($contractor->logo);
-            }
 
             $contractor->update(['logo' => $path]);
 
@@ -204,7 +180,7 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function contractorPlans($uuid)
+    public function contractorPlans(string $uuid)
     {
         try {
             $contractor = $this->repository->where('uuid', $uuid)->first();
@@ -221,12 +197,12 @@ class ContractorRepository implements ContractorRepositoryInterface {
         }
     }
 
-    public function attachPlans($request)
+    public function attachPlans(array $request)
     {
         try {
-            $contractor = $this->repository->where('uuid', $request->uuid)->first();
+            $contractor = $this->repository->where('uuid', $request['uuid'])->first();
 
-            $contractor->plans()->attach($request->plans);
+            $contractor->plans()->attach($request['plans']);
 
             return ['status'=>true, 'message'=> 'Planos adicionados.'];
 
@@ -236,12 +212,12 @@ class ContractorRepository implements ContractorRepositoryInterface {
 
     }
 
-    public function detachPlans($request)
+    public function detachPlans(array $request)
     {
         try {
-            $contractor = $this->repository->where('uuid', $request->uuid)->first();
+            $contractor = $this->repository->where('uuid', $request['uuid'])->first();
 
-            $contractor->plans()->detach($request->plans);
+            $contractor->plans()->detach($request['plans']);
 
             return ['status'=>true, 'message'=> 'Planos excluidos.'];
 
