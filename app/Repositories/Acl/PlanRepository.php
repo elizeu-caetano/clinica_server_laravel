@@ -12,24 +12,20 @@ use Illuminate\Support\Str;
 
 class PlanRepository implements PlanRepositoryInterface {
 
-    private $repository;
+    private $servicePlan;
 
     public function __construct(Plan $plan)
     {
-        $this->repository = $plan;
+        $this->servicePlan = $plan;
     }
 
-    public function search($request)
+    public function search(array $data)
     {
         try {
-
-            $active = !$request->active ? false : true;
-            $search = $request->search;
-
-            $plans = $this->repository->where('active', $active)
-            ->where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('price', 'LIKE', "%{$search}%");
+            $plans = $this->servicePlan->where('active', $data['active'])
+            ->where(function ($query) use ($data) {
+                $query->where('name', 'LIKE', '%'.$data['search'].'%')
+                ->orWhere('price', 'LIKE', '%'.$data['search'].'%');
             })->get();
 
             return ['status' => true, 'data' => PlanResource::collection($plans)];
@@ -40,14 +36,10 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function store($request)
+    public function store(array $data)
     {
         try {
-
-            $data = $request->all();
-            $data['uuid'] = Str::uuid();
-
-            $plan = $this->repository->create($data);
+            $plan = $this->servicePlan->create($data);
 
             return ['status' => true, 'message' => 'O Plano foi cadastrado.', 'data' => new PlanResource($plan)];
 
@@ -57,11 +49,10 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function show($uuid)
+    public function show(string $uuid)
     {
         try {
-
-            $plan = $this->repository->where('uuid', $uuid)->first();
+            $plan = $this->servicePlan->where('uuid', $uuid)->first();
 
             return ['status' => true, 'data' => new PlanResource($plan)];
 
@@ -71,13 +62,10 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
-
-            $data = $request->except(['active', 'created_at']);
-
-            $plan = $this->repository->where('uuid', $request->uuid)->first();
+            $plan = $this->servicePlan->where('uuid', $data['uuid'])->first();
             $plan->update($data);
 
             return ['status' => true, 'data' => new PlanResource($plan), 'message' => 'O Plano foi editado.'];
@@ -88,12 +76,12 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function activate($uuid)
+    public function activate(string $uuid)
     {
         try {
-            $this->repository->where('uuid', $uuid)->update(['active' => true]);
+            $this->servicePlan->where('uuid', $uuid)->update(['active' => true]);
 
-            $this->repository->where('uuid', $uuid)->first()->activateAudit('Planos');
+            $this->servicePlan->where('uuid', $uuid)->first()->activateAudit('Planos');
 
             return ['status' => true, 'message' => 'O Plano foi ativado.'];
 
@@ -103,12 +91,12 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function inactivate($uuid)
+    public function inactivate(string $uuid)
     {
         try {
-            $this->repository->where('uuid', $uuid)->update(['active' => false]);
+            $this->servicePlan->where('uuid', $uuid)->update(['active' => false]);
 
-            $this->repository->where('uuid', $uuid)->first()->inactivateAudit('Planos');
+            $this->servicePlan->where('uuid', $uuid)->first()->inactivateAudit('Planos');
 
             return ['status' => true, 'message' => 'O Plano foi inativado.'];
 
@@ -118,10 +106,10 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function destroy($uuid)
+    public function destroy(string $uuid)
     {
         try {
-            $this->repository->where('uuid', $uuid)->delete();
+            $this->servicePlan->where('uuid', $uuid)->delete();
 
             return ['status'=>true, 'message'=> 'O Plano foi excluído.'];
 
@@ -131,10 +119,10 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function planPermissions($uuid)
+    public function planPermissions(string $uuid)
     {
         try {
-            $plan = $this->repository->where('uuid', $uuid)->first();
+            $plan = Plan::where('uuid', $uuid)->first();
             $plansId = $plan->permissions()->pluck('id');
 
             $permissionsPlan = $plan->permissions()->get();
@@ -150,12 +138,12 @@ class PlanRepository implements PlanRepositoryInterface {
         }
     }
 
-    public function attachPermissions($request)
+    public function attachPermissions(array $data)
     {
         try {
-            $plan = $this->repository->where('uuid', $request->uuid)->first();
+            $plan = $this->servicePlan->where('uuid', $data['uuid'])->first();
 
-            $plan->permissions()->attach($request->permissions);
+            $plan->permissions()->attach($data['permissions']);
 
             return ['status'=>true, 'message'=> 'Permissões adicionadas.'];
 
@@ -165,12 +153,12 @@ class PlanRepository implements PlanRepositoryInterface {
 
     }
 
-    public function detachPermissions($request)
+    public function detachPermissions(array $data)
     {
         try {
-            $plan = $this->repository->where('uuid', $request->uuid)->first();
+            $plan = $this->servicePlan->where('uuid', $data['uuid'])->first();
 
-            $plan->permissions()->detach($request->permissions);
+            $plan->permissions()->detach($data['permissions']);
 
             return ['status'=>true, 'message'=> 'Permissões excluidas.'];
 

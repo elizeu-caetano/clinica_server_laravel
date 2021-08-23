@@ -4,23 +4,23 @@ namespace App\Repositories\Acl\Contracts;
 
 interface PlanRepositoryInterface {
 
-    public function search($request);
+    public function search(array $request);
 
-    public function store($request);
+    public function store(array $request);
 
-    public function show($uuid);
+    public function show(string $uuid);
 
-    public function update($request);
+    public function update(array $request);
 
-    public function activate($uuid);
+    public function activate(string $uuid);
 
-    public function inactivate($uuid);
+    public function inactivate(string $uuid);
 
-    public function destroy($uuid);
+    public function destroy(string $uuid);
 
-    public function planPermissions($uuid);
+    public function planPermissions(string $uuid);
 
-    public function attachPermissions($request);
+    public function attachPermissions(array $request);
 
-    public function detachPermissions($request);
+    public function detachPermissions(array $request);
 }

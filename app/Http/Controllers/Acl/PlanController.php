@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Acl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\PlanRequest;
 use App\Repositories\Acl\Contracts\PlanRepositoryInterface;
+use App\Services\Acl\PlanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -12,7 +13,7 @@ class PlanController extends Controller
 {
     private $repository;
 
-    public function __construct(PlanRepositoryInterface $repository, Request $request)
+    public function __construct(PlanService $repository)
     {
        $this->repository = $repository;
     }
