@@ -4,38 +4,36 @@ namespace App\Http\Controllers\Acl;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Acl\AuthUserRequest;
-use App\Models\Acl\User;
-use App\Repositories\Acl\Contracts\AuthUserRepositoryInterface;
-use Carbon\Carbon;
+use App\Services\Acl\AuthUserService;
 use Illuminate\Http\Request;
 
 class AuthUserController extends Controller
 {
-    private $repository;
+    private $authUserService;
 
-    public function __construct(AuthUserRepositoryInterface $repository)
+    public function __construct(AuthUserService $authUserService)
     {
-        $this->repository = $repository;
+        $this->authUserService = $authUserService;
     }
 
     public function auth(AuthUserRequest $request)
     {
-        return $this->repository->auth($request);
+        return $this->authUserService->auth($request);
     }
 
     public function authorized()
     {
-        return $this->repository->authorized();
+        return $this->authUserService->authorized();
     }
 
     public function logout(Request $request)
     {
-        return $this->repository->logout($request);
+        return $this->authUserService->logout($request);
     }
 
     public function emailConfirmation($uuid, $token)
     {
-        return $this->repository->emailConfirmation($uuid, $token);
+        return $this->authUserService->emailConfirmation($uuid, $token);
 
     }
 }

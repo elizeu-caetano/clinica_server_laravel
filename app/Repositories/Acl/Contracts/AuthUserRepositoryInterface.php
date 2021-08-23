@@ -4,11 +4,11 @@ namespace App\Repositories\Acl\Contracts;
 
 interface AuthUserRepositoryInterface {
 
-    public function auth($request);
+    public function auth(array $data, int $time);
 
     public function authorized();
 
-    public function logout($request);
+    public function logout(array $data);
 
-    public function emailConfirmation($uuid, $token);
+    public function emailConfirmation(string $uuid, string $token);
 }

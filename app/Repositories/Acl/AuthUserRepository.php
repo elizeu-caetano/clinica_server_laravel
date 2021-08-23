@@ -18,21 +18,18 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
         $this->repository = $user;
     }
 
-    public function auth($request)
+    public function auth(array $data, int $time)
     {
         try {
 
-            $user = $this->repository->where('email', $request->email)->first();
+            $user = $this->repository->where('email', $data['email'])->first();
 
-            //define how many hours for the token to expire
-            $hour = $request->timeToken ? $request->timeToken : 12;
-
-            if (!$user || !Hash::check($request->password, $user->password)) {
+            if (!$user || !Hash::check($data['password'], $user->password)) {
                 return ['status' => false, 'message' => 'Email ou Senha inválida.'];
             }
 
-            Passport::personalAccessTokensExpireIn(now()->addHour($hour));
-            $user->token = $user->createToken($request->device_name)->accessToken;
+            Passport::personalAccessTokensExpireIn(now()->addHour($time));
+            $user->token = $user->createToken($data['device_name'])->accessToken;
 
             $user->permissions = $this->permissions($user);
 
@@ -65,7 +62,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
         }
     }
 
-    public function logout($request)
+    public function logout(array $request)
     {
         try {
 
@@ -78,7 +75,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
 
     }
 
-    public function emailConfirmation($uuid, $token)
+    public function emailConfirmation(string $uuid, string $token)
     {
         try {
 
@@ -104,8 +101,6 @@ class AuthUserRepository implements AuthUserRepositoryInterface {
             } else{
                 return ['status' => false, 'message' => 'Não foi possível confirmar o email, entre em contato com sua empresa!'];
             }
-
-
 
         } catch (\Throwable $th) {
 
