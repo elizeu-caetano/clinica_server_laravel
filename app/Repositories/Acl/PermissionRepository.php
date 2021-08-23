@@ -15,16 +15,14 @@ class PermissionRepository implements PermissionRepositoryInterface {
         $this->repository = $permission;
     }
 
-    public function search($request)
+    public function search(array $data)
     {
         try {
-
-            $search = $request->search;
-
-            $permissions = $this->repository->where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('permission', 'LIKE', "%{$search}%");
-            })->get();
+            $permissions = $this->repository->where(function ($query) use ($data) {
+                                $query->where('name', 'LIKE', '%'.$data['search'].'%')
+                                ->orWhere('permission', 'LIKE', '%'.$data['search'].'%');
+                            })
+                            ->get();
 
             return ['status' => true, 'data' => PermissionResource::collection($permissions)];
 
@@ -34,27 +32,18 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
 
-    public function store($request)
+    public function store(array $data, array $plan_ids, bool $developer)
     {
         try {
-
-            if ($request->lote) {
-                $permission = $this->storeBatch($request);
-            } else {
-                $data['name'] = $request->name;
-                $data['permission'] = $request->permission;
-
                 $permission = $this->repository->create($data);
 
-                if ($request->plan_ids) {
-                    $permission->plans()->attach($request->plan_ids);
+                if ($plan_ids) {
+                    $permission->plans()->attach($plan_ids);
                 }
 
-                if (!$request->developer) {
+                if (!$developer) {
                     $this->attachPermissionRole($permission);
                 }
-
-            }
 
             return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
@@ -63,29 +52,32 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
 
-    private function storeBatch($request)
+    public function storeBatch(array $permissions, string $name, string $name_permission, array $plan_ids, bool $developer)
     {
-        $permissions = $this->createData($request->listPermission);
+        try {
+            for ($i=0; $i < count($permissions); $i++) {
 
-        for ($i=0; $i < count($permissions); $i++) {
+                foreach ($permissions[$i] as $key => $value) {
+                    $data['name'] = $value . ' ' . $name;
+                    $data['permission'] = $key . '_' . $name_permission;
+                }
 
-            foreach ($permissions[$i] as $key => $value) {
-                $data['name'] = $value . ' ' . $request->name;
-                $data['permission'] = $key . '_' . $request->permission;
+                $permission = $this->repository->create($data);
+
+                if ($plan_ids) {
+                    $permission->plans()->attach($plan_ids);
+                }
+
+                if (!$developer) {
+                    $this->attachPermissionRole($permission);
+                }
             }
 
-            $permission = $this->repository->create($data);
+            return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
-            if ($request->plan_ids) {
-                $permission->plans()->attach($request->plan_ids);
-            }
-
-            if (!$request->developer) {
-                $this->attachPermissionRole($permission);
-            }
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Permissão não foi cadastrada.', 'error' => $th->getMessage()];
         }
-
-        return $permission;
     }
 
     private function attachPermissionRole($permission)
@@ -104,35 +96,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
         $permission->roles()->attach($rolesId);
     }
 
-    private function createData($permissions)
-    {
-        $permission = [];
-        foreach ($permissions as $value) {
-            if ($value['description'] == 'Listar') {
-                array_push($permission, ['search' => 'Listar']);
-            } else if ($value['description'] == 'Cadastrar') {
-                array_push($permission, ['store' => 'Cadastrar']);
-            } else if ($value['description'] == 'Visualizar') {
-                array_push($permission, ['show' => 'Visualizar']);
-            } else if ($value['description'] == 'Editar') {
-                array_push($permission, ['update' => 'Editar']);
-            } else if ($value['description'] == 'Ativar') {
-                array_push($permission, ['activate' => 'Ativar']);
-            } else if ($value['description'] == 'Inativar') {
-                array_push($permission, ['inactivate' => 'Inativar']);
-            } else if ($value['description'] == 'Excluir') {
-                array_push($permission, ['destroy' => 'Excluir']);
-            } else if ($value['description'] == 'Apagar') {
-                array_push($permission, ['deleted' => 'Apagar']);
-            } else if ($value['description'] == 'Recuperar') {
-                array_push($permission, ['recover' => 'Recuperar']);
-            }
-        }
-
-        return $permission;
-    }
-
-    public function show($id)
+    public function show(int $id)
     {
         try {
 
@@ -146,13 +110,11 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
 
-            $data = $request->except(['created_at']);
-
-            $permission = $this->repository->find($request->id);
+            $permission = $this->repository->find($data['id']);
             $permission->update($data);
 
             return ['status' => true, 'message' => 'A Permissão foi editada.', 'data' => new PermissionResource($permission)];
@@ -163,7 +125,7 @@ class PermissionRepository implements PermissionRepositoryInterface {
         }
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         try {
             $permission = $this->repository->find($id);
