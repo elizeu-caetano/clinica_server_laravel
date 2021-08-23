@@ -4,35 +4,35 @@ namespace App\Repositories\Acl\Contracts;
 
 interface UserRepositoryInterface {
 
-    public function search($request);
+    public function search(array $request);
 
-    public function store($request);
+    public function store(array $request, string $password);
 
-    public function storeAdmin($request);
+    public function storeAdmin(array $request, string $password);
 
-    public function show($uuid);
+    public function show(string $uuid);
 
-    public function update($request);
+    public function update(array $request);
 
-    public function activate($uuid);
+    public function activate(string $uuid);
 
-    public function inactivate($uuid);
+    public function inactivate(string $uuid);
 
-    public function deleted($uuid);
+    public function deleted(string $uuid);
 
-    public function recover($uuid);
+    public function recover(string $uuid);
 
-    public function destroy($uuid);
+    public function destroy(string $uuid);
 
-    public function attachCompany($request);
+    public function attachCompany(array $request);
 
-    public function detachCompany($request);
+    public function detachCompany(array $request);
 
     public function profile();
 
-    public function profileUpdate($request);
+    public function profileUpdate(array $request);
 
-    public function uploadPhotoProfile($request);
+    public function uploadPhotoProfile(object $user, string $path);
 
-    public function updatePassword($request);
+    public function updatePassword(string $password);
 }

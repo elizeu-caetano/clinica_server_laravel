@@ -7,11 +7,7 @@ use App\Http\Resources\Acl\UserResource;
 use App\Http\Resources\Admin\CompanyResource;
 use App\Models\Acl\User;
 use App\Repositories\Acl\Contracts\UserRepositoryInterface;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Image;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -22,24 +18,20 @@ class UserRepository implements UserRepositoryInterface
         $this->repository = $user;
     }
 
-    public function search($request)
+    public function search(array $data)
     {
         try {
-
-            $active = !$request->active ? false : true;
-            $search = $request->search;
-
             $users = $this->repository->where('deleted', false)
-                ->where('active', $active)
-                ->where(function ($query) use ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
+                ->where('active', $data['active'])
+                ->where(function ($query) {
+                    if (Auth::user()->contractor_id != 1) {
+                        $query->where('contractor_id', Auth::user()->contractor_id);
+                    }
+                })
+                ->where(function ($query) use ($data) {
+                    $query->where('name', 'LIKE', '%'.$data['search'].'%')
+                        ->orWhere('email', 'LIKE', '%'.$data['search'].'%');
                 })->get();
-
-
-            if (Auth::user()->contractor_id != 1) {
-                $users = $users->where('contractor_id', Auth::user()->contractor_id);
-            }
 
             return ['status' => true, 'data' => UserResource::collection($users)];
         } catch (\Throwable $th) {
@@ -48,22 +40,13 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function store($request)
+    public function store(array $data, string $password)
     {
         try {
-            $data = $request->all();
-            $senha = rand(111111, 999999);
-            $data['password'] = Hash::make($senha);
-            $data['uuid'] = Str::uuid();
-            $data['contractor_id'] = Auth::user()->contractor_id;
-            $data['phone'] = $request->cell;
-            $data['type'] = 'Celular';
-            $data['token'] = Str::random(40);
-
             $user = $this->repository->create($data);
             $user->phones()->create($data);
 
-            $user->password = $senha;
+            $user->password = $password;
             event(new NewUser($user));
 
             return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
@@ -73,21 +56,14 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function storeAdmin($request)
+    public function storeAdmin(array $data, string $password)
     {
         try {
-            $data = $request->all();
-            $senha = rand(111111, 999999);
-            $data['password'] = Hash::make($senha);
-            $data['uuid'] = Str::uuid();
-            $data['phone'] = $request->cell;
-            $data['type'] = 'Celular';
-            $data['token'] = Str::random(40);
 
             $user = $this->repository->create($data);
             $user->phones()->create($data);
 
-            $user->password = $senha;
+            $user->password = $password;
             event(new NewUser($user));
 
             return ['status' => true, 'message' => 'O Usuário foi cadastrado.', 'data' => new UserResource($user)];
@@ -97,10 +73,9 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function show($uuid)
+    public function show(string $uuid)
     {
         try {
-
             $user = $this->repository->where('uuid', $uuid)->first();
 
             return ['status' => true, 'data' => new UserResource($user)];
@@ -110,26 +85,14 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function update($request)
+    public function update(array $data)
     {
         try {
-            $data = $request->except(['deleted', 'created_at', 'photo']);
-
-            $user = $this->repository->where('uuid', $request->uuid)->first();
-            $phone = $user->phones->where('type', 'celular')->first();
+            $user = $this->repository->where('uuid', $data['uuid'])->first();
 
             $user->update($data);
 
-            if ($phone) {
-                $phone->update([
-                    'phone' => $data['cell']
-                ]);
-            } else {
-                $user->phones()->create([
-                    'phone' => $data['cell'],
-                    'type' => 'celular'
-                ]);
-            }
+            $user->phones()->updateOrCreate(['type' => 'celular'], ['phone' => $data['cell']]);
 
             return ['status' => true, 'data' => new UserResource($user), 'message' => 'O Usuário foi editado.'];
         } catch (\Throwable $th) {
@@ -138,7 +101,7 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function activate($uuid)
+    public function activate(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => true]);
@@ -152,7 +115,7 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function inactivate($uuid)
+    public function inactivate(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['active' => false]);
@@ -166,7 +129,7 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function deleted($uuid)
+    public function deleted(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => true]);
@@ -180,7 +143,7 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function recover($uuid)
+    public function recover(string $uuid)
     {
         try {
             $this->repository->where('uuid', $uuid)->update(['deleted' => false]);
@@ -194,7 +157,7 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function destroy($uuid)
+    public function destroy(string $uuid)
     {
         try {
             $user = $this->repository->where('uuid', $uuid)->first();
@@ -210,11 +173,11 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function attachCompany($request)
+    public function attachCompany(array $data)
     {
         try {
-            $user = User::where('uuid', $request->user)->first();
-            $user->companies()->attach($request->company);
+            $user = User::where('uuid', $data['user'])->first();
+            $user->companies()->attach($data['company']);
 
             $companies = $user->companies()->get();
 
@@ -224,11 +187,11 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function detachCompany($request)
+    public function detachCompany(array $data)
     {
         try {
-            $user = User::where('uuid', $request->userUuid)->first();
-            $user->companies()->detach($request->companyId);
+            $user = User::where('uuid', $data['userUuid'])->first();
+            $user->companies()->detach($data['companyId']);
 
             $companies = $user->companies()->get();
 
@@ -249,12 +212,12 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function profileUpdate($request)
+    public function profileUpdate(array $data)
     {
         try {
             $user = Auth::user();
 
-            $user->update($request->all());
+            $user->update($data);
 
             return ['status' => true, 'message' => 'O Usuário foi editado.'];
         } catch (\Throwable $th) {
@@ -262,41 +225,28 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function updatePassword($request)
+    public function uploadPhotoProfile(object $user, string $path)
     {
         try {
-            $user = Auth::user();
-
-            $senha =  Hash::make($request->password);
-
-            $user->update(['password' => $senha]);
-
-            return ['status' => true, 'message' => 'A senha foi alterada.'];
-        } catch (\Throwable $th) {
-            return ['status' => false, 'message' => 'A senha não foi alterada.', 'error' => $th->getMessage()];
-        }
-    }
-
-    public function uploadPhotoProfile($request)
-    {
-        try {
-            $user = Auth::user();
-
-            $extension = request()->file('image')->getClientOriginalExtension();
-            $image = Image::make(request()->file('image'))->resize(500, 500)->encode($extension);
-            $path = 'users/' . Str::random(40) . '.' . $extension;
-            Storage::disk('s3')->put($path, (string)$image, 'public');
-
-            if ($user->photo != '') {
-                Storage::disk('s3')->delete($user->photo);
-            }
-
             $user->update(['photo' => $path]);
 
             return ['status' => true, 'message' => 'A Foto foi adicionada.', 'data' => new UserResource($user)];
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'A Foto não foi adicionada.', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function updatePassword(string $password)
+    {
+        try {
+            $user = Auth::user();
+
+            $user->update(['password' => $password]);
+
+            return ['status' => true, 'message' => 'A senha foi alterada.'];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A senha não foi alterada.', 'error' => $th->getMessage()];
         }
     }
 }
