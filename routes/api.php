@@ -2,10 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Acl\AuthUserController;
-use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\CepController;
 use App\Http\Controllers\Admin\SearchCompanyRfController;
-use App\Models\Admin\Audit;
 
 Route::post('/auth', [AuthUserController::class, 'auth']);
 Route::get('/auth/user-email-confirmation/{uuid}/{token}', [AuthUserController::class, 'emailConfirmation']);
@@ -28,6 +26,8 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::prefix('contractors')->group(base_path('routes/api-contractors.php'));
 
     Route::prefix('permissions')->group(base_path('routes/api-permissions.php'));
+
+    Route::prefix('procedures')->group(base_path('routes/api-procedures.php'));
 
     Route::prefix('procedure-groups')->group(base_path('routes/api-procedure-groups.php'));
 
