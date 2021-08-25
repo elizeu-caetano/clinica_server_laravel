@@ -22,7 +22,8 @@ class PlanRepository implements PlanRepositoryInterface {
     public function search(array $data)
     {
         try {
-            $plans = $this->servicePlan->where('active', $data['active'])
+            $plans = $this->servicePlan->with(['plans'])
+            ->where('active', $data['active'])
             ->where(function ($query) use ($data) {
                 $query->where('name', 'LIKE', '%'.$data['search'].'%')
                 ->orWhere('price', 'LIKE', '%'.$data['search'].'%');

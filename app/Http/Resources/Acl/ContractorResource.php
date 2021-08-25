@@ -25,7 +25,7 @@ class ContractorResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'type_person' => $this->type_person,
-            'plans' => PlanResource::collection($this->plans()->where('id', '>', 1)->get()),
+            'plans' => PlanResource::collection($this->plans->where('id', '>', 1)),
             'person' => $this->type_person == 'J' ? 'Jurídica' : 'Física',
             'active' => $this->active ? 'Sim' : 'Não',
             'logo' => $this->logo ? env('AWS_URL').$this->logo : null,

@@ -20,7 +20,8 @@ class CompanyRepository implements CompanyRepositoryInterface
     public function search(array $data)
     {
         try {
-            $companies = $this->repository->where('active', $data['active'])
+            $companies = $this->repository->with(['phones', 'emails', 'addresses'])
+                        ->where('active', $data['active'])
                         ->where('deleted', false)
                         ->where(function ($query) {
                             if (Auth::user()->contractor_id != 1) {

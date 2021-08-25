@@ -21,7 +21,8 @@ class UserRepository implements UserRepositoryInterface
     public function search(array $data)
     {
         try {
-            $users = $this->repository->where('deleted', false)
+            $users = $this->repository->with(['phones', 'contractor'])
+                ->where('deleted', false)
                 ->where('active', $data['active'])
                 ->where(function ($query) {
                     if (Auth::user()->contractor_id != 1) {

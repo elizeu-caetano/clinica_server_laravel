@@ -23,7 +23,8 @@ class RoleRepository implements RoleRepositoryInterface
     public function search(array $data)
     {
         try {
-            $roles = $this->repository->where('active', $data['active'])
+            $roles = $this->repository->with('contractor')
+                ->where('active', $data['active'])
                 ->where('deleted', false)
                 ->where(function ($query) {
                     if (Auth::user()->contractor_id != 1) {

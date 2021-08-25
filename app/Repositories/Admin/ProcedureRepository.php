@@ -19,7 +19,8 @@ class ProcedureRepository implements ProcedureRepositoryInterface
     public function search(array $data)
     {
         try {
-            $prodedure = $this->repository->where('deleted', false)
+            $prodedure = $this->repository->with(['procedureGroup', 'contractor'])
+                                ->where('deleted', false)
                                 ->where('active', $data['active'])
                                 ->where('name', 'LIKE', '%'.$data['search'].'%')
                                 ->where(function ($query){
@@ -27,9 +28,9 @@ class ProcedureRepository implements ProcedureRepositoryInterface
                                         $query->where('contractor_id', Auth::user()->contractor_id);
                                     }
                                 })
-                                ->orderBy('name');
+                                ->orderBy('name')->get();
 
-            return ['status' => true, 'data' => ProcedureResource::collection($prodedure->get())];
+            return ['status' => true, 'data' => ProcedureResource::collection($prodedure)];
         } catch (\Throwable $th) {
 
             return ['status' => false, 'message' => 'Não foi possível carregar os dados.', 'error' => $th->getMessage()];
