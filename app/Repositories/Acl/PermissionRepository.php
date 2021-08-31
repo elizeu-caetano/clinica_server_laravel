@@ -5,6 +5,7 @@ namespace App\Repositories\Acl;
 use App\Http\Resources\Acl\PermissionResource;
 use App\Models\Acl\Permission;
 use App\Repositories\Acl\Contracts\PermissionRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 
 class PermissionRepository implements PermissionRepositoryInterface {
 
@@ -44,6 +45,8 @@ class PermissionRepository implements PermissionRepositoryInterface {
                 if (!$developer) {
                     $this->attachPermissionRole($permission);
                 }
+
+                Cache::forget('permissions_provider');
 
             return ['status' => true, 'message' => 'A Permissão foi cadastrada.', 'data' => new PermissionResource($permission)];
 
@@ -117,6 +120,8 @@ class PermissionRepository implements PermissionRepositoryInterface {
             $permission = $this->repository->find($data['id']);
             $permission->update($data);
 
+            Cache::forget('permissions_provider');
+
             return ['status' => true, 'message' => 'A Permissão foi editada.', 'data' => new PermissionResource($permission)];
 
         } catch (\Throwable $th) {
@@ -134,6 +139,8 @@ class PermissionRepository implements PermissionRepositoryInterface {
             $permission->roles()->detach();
 
             $permission->delete();
+
+            Cache::forget('permissions_provider');
 
             return ['status'=> true, 'message'=> 'A Permissão foi excluída.'];
 

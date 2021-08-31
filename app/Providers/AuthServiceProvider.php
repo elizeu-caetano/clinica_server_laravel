@@ -7,6 +7,7 @@ use App\Models\Acl\{
 };
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
 
@@ -30,7 +31,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         Passport::routes();
 
-        $permissions = Permission::all();
+       //$permissions = Permission::all();
+
+        $permissions = Cache::rememberForever('permissions_provider', function () {
+            return  Permission::all();
+        });
 
         foreach ($permissions as $permission) {
             Gate::define($permission->permission, function (User $user) use ($permission) {
