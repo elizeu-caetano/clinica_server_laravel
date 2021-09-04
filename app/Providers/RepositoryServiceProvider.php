@@ -23,6 +23,7 @@ use App\Repositories\Acl\{
 use App\Repositories\Admin\{
     AuditRepository,
     CompanyRepository,
+    DiscountTableRepository,
     ProcedureRepository,
     ProcedureGroupRepository
 };
@@ -30,6 +31,7 @@ use App\Repositories\Admin\{
 use App\Repositories\Admin\Contracts\{
     AuditRepositoryInterface,
     CompanyRepositoryInterface,
+    DiscountTableRepositoryInterface,
     ProcedureRepositoryInterface,
     ProcedureGroupRepositoryInterface
 };
@@ -49,6 +51,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AuthUserRepositoryInterface::class, AuthUserRepository::class);
         $this->app->bind(CompanyRepositoryInterface::class, CompanyRepository::class);
         $this->app->bind(ContractorRepositoryInterface::class, ContractorRepository::class);
+        $this->app->bind(DiscountTableRepositoryInterface::class, DiscountTableRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(ProcedureRepositoryInterface::class, ProcedureRepository::class);
         $this->app->bind(ProcedureGroupRepositoryInterface::class, ProcedureGroupRepository::class);

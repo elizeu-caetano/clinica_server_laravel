@@ -12,7 +12,6 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
 
     Route::get('/authorized', [AuthUserController::class, 'authorized']);
 
-
     Route::post('/logout', [AuthUserController::class, 'logout']);
 
     Route::get('/search-company-cnpj/{cnpj}', [SearchCompanyRfController::class, 'getCompanyByCnpj']);
@@ -24,6 +23,8 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::prefix('companies')->group(base_path('routes/api-companies.php'));
 
     Route::prefix('contractors')->group(base_path('routes/api-contractors.php'));
+
+    Route::prefix('discount-tables')->group(base_path('routes/api-discount-tables.php'));
 
     Route::prefix('permissions')->group(base_path('routes/api-permissions.php'));
 

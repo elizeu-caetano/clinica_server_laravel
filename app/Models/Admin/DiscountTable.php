@@ -12,7 +12,7 @@ class DiscountTable extends Model implements AuditableContract
 {
     use HasFactory, Auditable, AuditTrait;
 
-    protected $fillable = ['uuid', 'name', 'active', 'deleted', 'company_id'];
+    protected $fillable = ['uuid', 'name', 'active', 'deleted', 'contractor_id'];
 
     public function generateTags(): array
     {

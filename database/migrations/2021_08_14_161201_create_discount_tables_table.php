@@ -19,7 +19,7 @@ class CreateDiscountTablesTable extends Migration
             $table->string('name');
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
-            $table->foreignId('company_id')->constrained();
+            $table->foreignId('contractor_id')->constrained();
             $table->timestamps();
         });
     }

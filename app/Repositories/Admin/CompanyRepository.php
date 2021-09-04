@@ -53,7 +53,7 @@ class CompanyRepository implements CompanyRepositoryInterface
 
             $company->emails()->create(['type' => 'Principal', 'email' => $data['email']]);
 
-            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $data['address']);
+            $company->addresses()->updateOrCreate(['type' => 'Residêncial'], $data['address']);
 
 
             return ['status' => true, 'message' => 'A Empresa foi cadastrada.', 'data' => new CompanyResource($company)];
@@ -91,7 +91,7 @@ class CompanyRepository implements CompanyRepositoryInterface
 
             $company->emails()->updateOrCreate(['type' => 'Principal'], ['email' => $data['email']]);
 
-            $company->addresses()->updateOrCreate(['type' => 'Residencial'], $data['address']);
+            $company->addresses()->updateOrCreate(['type' => 'Residêncial'], $data['address']);
 
             return ['status' => true, 'data' => new CompanyResource($company), 'message' => 'A Empresa foi editada.'];
         } catch (\Throwable $th) {
