@@ -8,16 +8,16 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
 use App\Traits\AuditTrait;
 
-class DefaultOccupation extends Model implements AuditableContract
+class CompanyOccupation extends Model implements AuditableContract
 {
     use HasFactory, Auditable, AuditTrait;
 
-    protected $fillable = ['uuid', 'name', 'code', 'active', 'deleted'];
+    protected $fillable = ['uuid', 'name', 'code', 'active', 'deleted', 'company_id'];
 
     public function generateTags(): array
     {
         return [
-            'Funções Padrão'
+            'Funções'
         ];
     }
 

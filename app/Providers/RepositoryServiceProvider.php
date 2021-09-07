@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Providers;
+use Illuminate\Support\ServiceProvider;
 
+// Acl
 use App\Repositories\Acl\Contracts\{
     AuthUserRepositoryInterface,
     ContractorRepositoryInterface,
@@ -20,6 +22,7 @@ use App\Repositories\Acl\{
     UserRepository
 };
 
+// Adm
 use App\Repositories\Admin\{
     AuditRepository,
     CompanyRepository,
@@ -36,7 +39,14 @@ use App\Repositories\Admin\Contracts\{
     ProcedureGroupRepositoryInterface
 };
 
-use Illuminate\Support\ServiceProvider;
+// JobMed
+use App\Repositories\JobMed\Contracts\{
+    OccupationRepositoryInterface
+};
+
+use App\Repositories\JobMed\{
+    OccupationRepository
+};
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -51,6 +61,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AuthUserRepositoryInterface::class, AuthUserRepository::class);
         $this->app->bind(CompanyRepositoryInterface::class, CompanyRepository::class);
         $this->app->bind(ContractorRepositoryInterface::class, ContractorRepository::class);
+        $this->app->bind(OccupationRepositoryInterface::class, OccupationRepository::class);
         $this->app->bind(DiscountTableRepositoryInterface::class, DiscountTableRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(ProcedureRepositoryInterface::class, ProcedureRepository::class);
