@@ -15,12 +15,11 @@ class CreateOccupationsTable extends Migration
     {
         Schema::create('occupations', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
-            $table->string('name', 100);
-            $table->bigInteger('code');
+            $table->unsignedBigInteger('code');
+            $table->string('name');
+            $table->string('type');
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
-            $table->foreignId('company_id')->constrained();
             $table->timestamps();
         });
     }

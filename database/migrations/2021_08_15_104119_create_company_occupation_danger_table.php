@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDangerDefaultOccupationTable extends Migration
+class CreateCompanyOccupationDangerTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateDangerDefaultOccupationTable extends Migration
      */
     public function up()
     {
-        Schema::create('danger_default_occupation', function (Blueprint $table) {
+        Schema::create('company_occupation_danger', function (Blueprint $table) {
+            $table->foreignId('company_occupation_id')->constrained();
             $table->foreignId('danger_id')->constrained();
-            $table->foreignId('default_occupation_id')->constrained();
 
-            $table->primary(['danger_id', 'default_occupation_id'], 'custom_index');
+            $table->primary(['company_occupation_id', 'danger_id'], 'custom_index');
         });
     }
 
@@ -28,6 +28,6 @@ class CreateDangerDefaultOccupationTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('danger_default_occupation');
+        Schema::dropIfExists('company_occupation_danger');
     }
 }

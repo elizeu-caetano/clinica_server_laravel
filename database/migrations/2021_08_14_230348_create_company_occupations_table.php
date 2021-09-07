@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDefaultOccupationsTable extends Migration
+class CreateCompanyOccupationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateDefaultOccupationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('default_occupations', function (Blueprint $table) {
+        Schema::create('company_occupations', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
-            $table->string('name', 100);
-            $table->bigInteger('code');
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
+            $table->foreignId('occupation_id')->constrained();
+            $table->foreignId('company_id')->constrained();
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateDefaultOccupationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('default_occupations');
+        Schema::dropIfExists('company_occupations');
     }
 }

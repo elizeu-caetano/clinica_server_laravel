@@ -15,8 +15,7 @@ class CreateDangersTable extends Migration
     {
         Schema::create('dangers', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
-            $table->string('name', 100);
+            $table->string('name');
             $table->boolean('active')->default(true);
             $table->boolean('deleted')->default(false);
             $table->timestamps();
