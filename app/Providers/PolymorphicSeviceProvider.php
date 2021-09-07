@@ -25,16 +25,20 @@ class PolymorphicSeviceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'users' => 'App\Models\Acl\User',
-            'contractors' => 'App\Models\Acl\Contractor',
-            'plans' => 'App\Models\Acl\Plan',
-            'permissions' => 'App\Models\Acl\Permission',
-            'roles' => 'App\Models\Acl\Role',
-            'phones' => 'App\Models\Admin\Phone',
-            'emails' => 'App\Models\Admin\Email',
+            'addresses' => 'App\Models\Admin\Address',
             'companies' => 'App\Models\Admin\Company',
+            'contractors' => 'App\Models\Acl\Contractor',
+            'dangers' => 'App\Models\JobMed\Danger',
+            'discount_tables' => 'App\Models\Admin\DiscountTable',
+            'emails' => 'App\Models\Admin\Email',
+            'occupations' => 'App\Models\JobMed\Occupation',
+            'permissions' => 'App\Models\Acl\Permission',
+            'plans' => 'App\Models\Acl\Plan',
+            'phones' => 'App\Models\Admin\Phone',
+            'procedure' => 'App\Models\Admin\Procedure',
             'procedure_groups' => 'App\Models\Admin\ProcedureGroup',
-            'addresses' => 'App\Models\Admin\Address'
+            'roles' => 'App\Models\Acl\Role',
+            'users' => 'App\Models\Acl\User'
         ]);
     }
 }

@@ -41,10 +41,12 @@ use App\Repositories\Admin\Contracts\{
 
 // JobMed
 use App\Repositories\JobMed\Contracts\{
+    DangerRepositoryInterface,
     OccupationRepositoryInterface
 };
 
 use App\Repositories\JobMed\{
+    DangerRepository,
     OccupationRepository
 };
 
@@ -62,6 +64,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CompanyRepositoryInterface::class, CompanyRepository::class);
         $this->app->bind(ContractorRepositoryInterface::class, ContractorRepository::class);
         $this->app->bind(OccupationRepositoryInterface::class, OccupationRepository::class);
+        $this->app->bind(DangerRepositoryInterface::class, DangerRepository::class);
         $this->app->bind(DiscountTableRepositoryInterface::class, DiscountTableRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(ProcedureRepositoryInterface::class, ProcedureRepository::class);
