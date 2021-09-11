@@ -2,8 +2,10 @@
 
 namespace App\Repositories\JobMed;
 
+use App\Http\Resources\Admin\ProcedureResource;
 use App\Http\Resources\JobMed\DangerResource;
 use App\Http\Resources\JobMed\OccupationResource;
+use App\Models\Admin\Procedure;
 use App\Models\JobMed\Danger;
 use App\Models\JobMed\Occupation;
 use App\Repositories\JobMed\Contracts\OccupationRepositoryInterface;
@@ -185,6 +187,57 @@ class OccupationRepository implements OccupationRepositoryInterface
 
         } catch (\Throwable $th) {
             return ['status'=>false, 'message'=> 'As Riscos não foram excluidos.', 'error'=> $th->getMessage()];
+        }
+
+    }
+
+    public function proceduresOccupation(int $id)
+    {
+        try {
+            $occupation = $this->repository->find($id);
+            $proceduresId = $occupation->procedures()->pluck('id');
+
+            $proceduresOccupation = $occupation->procedures()->get();
+
+            $proceduresNotOccupation = Procedure::whereNotIn('id', $proceduresId)->get();
+
+            return [
+                'status'=> true,
+                'proceduresOccupation'=> ProcedureResource::collection($proceduresOccupation),
+                'proceduresNotOccupation' => ProcedureResource::collection($proceduresNotOccupation)
+            ];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Não foi possível carregar os Procedimentos', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function attachProcedures(array $data)
+    {
+        try {
+            $occupation = $this->repository->find($data['id']);
+
+            $occupation->procedures()->attach($data['procedures']);
+
+            return ['status'=>true, 'message'=> 'Procedimentos adicionados.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Os Procedimentos não foram adicionados.', 'error'=> $th->getMessage()];
+        }
+
+    }
+
+    public function detachProcedures(array $data)
+    {
+        try {
+            $occupation = $this->repository->find($data['id']);
+
+            $occupation->procedures()->detach($data['procedures']);
+
+            return ['status'=>true, 'message'=> 'Procedimentos excluidos.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As Procedimentos não foram excluidos.', 'error'=> $th->getMessage()];
         }
 
     }

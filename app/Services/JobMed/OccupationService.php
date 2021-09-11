@@ -83,4 +83,21 @@ class OccupationService
         $data = $request->all();
         return $this->repository->detachDangers($data);
     }
+
+    public function proceduresOccupation(int $id)
+    {
+        return $this->repository->proceduresOccupation($id);
+    }
+
+    public function attachProcedures(object $request)
+    {
+        $data = $request->all();
+        return $this->repository->attachProcedures($data);
+    }
+
+    public function detachProcedures(object $request)
+    {
+        $data = $request->all();
+        return $this->repository->detachProcedures($data);
+    }
 }

@@ -95,4 +95,19 @@ class OccupationController extends Controller
     {
         return $this->service->detachDangers($request);
     }
+
+    public function proceduresOccupation($id)
+    {
+        return $this->service->proceduresOccupation($id);
+    }
+
+    public function attachProcedures(Request $request)
+    {
+        return $this->service->attachProcedures($request);
+    }
+
+    public function detachProcedures(Request $request)
+    {
+        return $this->service->detachProcedures($request);
+    }
 }

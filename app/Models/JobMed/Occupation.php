@@ -3,6 +3,7 @@
 namespace App\Models\JobMed;
 
 use App\Models\Admin\Audit;
+use App\Models\Admin\Procedure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -30,5 +31,10 @@ class Occupation extends Model implements AuditableContract
     public function dangers()
     {
         return $this->belongsToMany(Danger::class);
+    }
+
+    public function procedures()
+    {
+        return $this->belongsToMany(Procedure::class);
     }
 }

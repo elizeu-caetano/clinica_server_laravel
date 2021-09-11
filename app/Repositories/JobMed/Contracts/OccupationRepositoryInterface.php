@@ -27,4 +27,10 @@ interface OccupationRepositoryInterface {
     public function attachDangers(array $data);
 
     public function detachDangers(array $data);
+
+    public function proceduresOccupation(int $id);
+
+    public function attachProcedures(array $data);
+
+    public function detachProcedures(array $data);
 }

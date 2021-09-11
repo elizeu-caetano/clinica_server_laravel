@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Models\Acl\Contractor;
+use App\Models\JobMed\Occupation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -38,6 +39,11 @@ class Procedure extends Model implements AuditableContract
         $this->attributes['material'] =  str_replace(',', '.', str_replace(array('R$',' ','.'), '', $value));
     }
 
+    public function audit()
+    {
+        return $this->morphMany(Audit::class, 'auditable');
+    }
+
     public function procedureGroup()
     {
         return $this->belongsTo(ProcedureGroup::class);
@@ -48,8 +54,8 @@ class Procedure extends Model implements AuditableContract
         return $this->belongsTo(Contractor::class);
     }
 
-    public function audit()
+    public function occupations()
     {
-        return $this->morphMany(Audit::class, 'auditable');
+        return $this->belongsToMany(Occupation::class);
     }
 }
