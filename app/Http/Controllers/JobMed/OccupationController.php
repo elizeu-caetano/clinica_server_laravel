@@ -83,31 +83,47 @@ class OccupationController extends Controller
 
     public function dangersOccupation($id)
     {
+        if(Gate::none(['add_dangers_occupation', 'remove_dangers_occupation'])){
+            abort(403);
+        }
+
         return $this->service->dangersOccupation($id);
     }
 
     public function attachDangers(Request $request)
     {
+        Gate::authorize('add_dangers_occupation');
+
         return $this->service->attachDangers($request);
     }
 
     public function detachDangers(Request $request)
     {
+        Gate::authorize('remove_dangers_occupation');
+
         return $this->service->detachDangers($request);
     }
 
     public function proceduresOccupation($id)
     {
+        if(Gate::none(['add_procedures_occupation', 'remove_procedures_occupation'])){
+            abort(403);
+        }
+
         return $this->service->proceduresOccupation($id);
     }
 
     public function attachProcedures(Request $request)
     {
+        Gate::authorize('add_procedures_occupation');
+
         return $this->service->attachProcedures($request);
     }
 
     public function detachProcedures(Request $request)
     {
+        Gate::authorize('remove_procedures_occupation');
+
         return $this->service->detachProcedures($request);
     }
 }
