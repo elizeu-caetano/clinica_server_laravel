@@ -66,4 +66,21 @@ class OccupationService
     {
         return $this->repository->destroy($id);
     }
+
+    public function dangersOccupation(int $id)
+    {
+        return $this->repository->dangersOccupation($id);
+    }
+
+    public function attachDangers(object $request)
+    {
+        $data = $request->all();
+        return $this->repository->attachDangers($data);
+    }
+
+    public function detachDangers(object $request)
+    {
+        $data = $request->all();
+        return $this->repository->detachDangers($data);
+    }
 }

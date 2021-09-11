@@ -26,4 +26,9 @@ class Occupation extends Model implements AuditableContract
     {
         return $this->morphMany(Audit::class, 'auditable');
     }
+
+    public function dangers()
+    {
+        return $this->belongsToMany(Danger::class);
+    }
 }

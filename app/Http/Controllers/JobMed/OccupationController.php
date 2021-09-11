@@ -80,4 +80,19 @@ class OccupationController extends Controller
 
         return $this->service->destroy($id);
     }
+
+    public function dangersOccupation($id)
+    {
+        return $this->service->dangersOccupation($id);
+    }
+
+    public function attachDangers(Request $request)
+    {
+        return $this->service->attachDangers($request);
+    }
+
+    public function detachDangers(Request $request)
+    {
+        return $this->service->detachDangers($request);
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Repositories\JobMed;
 
+use App\Http\Resources\JobMed\DangerResource;
 use App\Http\Resources\JobMed\OccupationResource;
+use App\Models\JobMed\Danger;
 use App\Models\JobMed\Occupation;
 use App\Repositories\JobMed\Contracts\OccupationRepositoryInterface;
 
@@ -134,5 +136,56 @@ class OccupationRepository implements OccupationRepositoryInterface
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'A Função não foi excluída.', 'error' => $th->getMessage()];
         }
+    }
+
+    public function dangersOccupation(int $id)
+    {
+        try {
+            $occupation = $this->repository->find($id);
+            $dangersId = $occupation->dangers()->pluck('id');
+
+            $dangersOccupation = $occupation->dangers()->get();
+
+            $dangersNotOccupation = Danger::whereNotIn('id', $dangersId)->get();
+
+            return [
+                'status'=> true,
+                'dangersOccupation'=> DangerResource::collection($dangersOccupation),
+                'dangersNotOccupation' => DangerResource::collection($dangersNotOccupation)
+            ];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Não foi possível carregar os riscos', 'error'=> $th->getMessage()];
+        }
+    }
+
+    public function attachDangers(array $data)
+    {
+        try {
+            $occupation = $this->repository->find($data['id']);
+
+            $occupation->dangers()->attach($data['dangers']);
+
+            return ['status'=>true, 'message'=> 'Riscos adicionados.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'Os Riscos não foram adicionados.', 'error'=> $th->getMessage()];
+        }
+
+    }
+
+    public function detachDangers(array $data)
+    {
+        try {
+            $occupation = $this->repository->find($data['id']);
+
+            $occupation->dangers()->detach($data['dangers']);
+
+            return ['status'=>true, 'message'=> 'Riscos excluidos.'];
+
+        } catch (\Throwable $th) {
+            return ['status'=>false, 'message'=> 'As Riscos não foram excluidos.', 'error'=> $th->getMessage()];
+        }
+
     }
 }

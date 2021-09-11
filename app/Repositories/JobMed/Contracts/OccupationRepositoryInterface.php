@@ -21,4 +21,10 @@ interface OccupationRepositoryInterface {
     public function recover(int $id);
 
     public function destroy(int $id);
+
+    public function dangersOccupation(int $id);
+
+    public function attachDangers(array $data);
+
+    public function detachDangers(array $data);
 }
