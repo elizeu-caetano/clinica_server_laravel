@@ -26,7 +26,8 @@ class OccupationRepository implements OccupationRepositoryInterface
                 ->where('deleted', false)
                 ->where(function ($query) use ($data) {
                     $query->where('name', 'LIKE', '%' . $data['search'] . '%')
-                        ->orWhere('code', 'LIKE', '%' . $data['search'] . '%');
+                        ->orWhere('code', 'LIKE', '%' . $data['search'] . '%')
+                        ->orWhere('type', 'LIKE', '%' . $data['search'] . '%');
                 })
                 ->orderBy('name')->get();
 

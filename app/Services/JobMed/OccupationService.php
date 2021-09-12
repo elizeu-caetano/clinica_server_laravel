@@ -17,6 +17,7 @@ class OccupationService
     {
         $data = $request->all();
         $data['active'] = !$request->active ? false : true;
+        $data['search'] = $request->search ?? 'Ocupação';
 
         return $this->repository->search($data);
     }
