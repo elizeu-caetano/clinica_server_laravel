@@ -2,27 +2,48 @@
 
 namespace App\Models\JobMed;
 
+use App\Models\Admin\Company;
+use App\Models\Admin\Procedure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
-use App\Traits\AuditTrait;
 
 class CompanyOccupation extends Model implements AuditableContract
 {
-    use HasFactory, Auditable, AuditTrait;
+    use HasFactory, Auditable;
 
-    protected $fillable = ['uuid', 'name', 'code', 'active', 'deleted', 'company_id'];
+    protected $fillable = ['company_id', 'occupation_id'];
 
     public function generateTags(): array
     {
         return [
-            'Funções'
+            'Funções da Empresa'
         ];
     }
 
     public function audit()
     {
         return $this->morphMany(Audit::class, 'auditable');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function occupation()
+    {
+        return $this->belongsTo(Occupation::class);
+    }
+
+    private function dangers()
+    {
+        return $this->belongsToMany(Danger::class);
+    }
+
+    private function procedures()
+    {
+        return $this->belongsToMany(Procedure::class);
     }
 }

@@ -22,6 +22,8 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
 
     Route::prefix('companies')->group(base_path('routes/api-companies.php'));
 
+    Route::prefix('company-occupations')->group(base_path('routes/api-company-occupations.php'));
+
     Route::prefix('contractors')->group(base_path('routes/api-contractors.php'));
 
     Route::prefix('occupations')->group(base_path('routes/api-occupations.php'));

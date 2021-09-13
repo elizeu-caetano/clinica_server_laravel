@@ -14,11 +14,10 @@ class CreateCompanyOccupationsTable extends Migration
     public function up()
     {
         Schema::create('company_occupations', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->foreignId('company_id')->constrained();
             $table->foreignId('occupation_id')->constrained();
-
-            $table->primary(['id', 'company_id', 'occupation_id'], 'custom_index');
+            $table->timestamps();
         });
     }
 

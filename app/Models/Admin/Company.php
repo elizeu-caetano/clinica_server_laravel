@@ -4,6 +4,7 @@ namespace App\Models\Admin;
 
 use App\Models\Acl\Contractor;
 use App\Models\Acl\User;
+use App\Models\JobMed\CompanyOccupation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -47,6 +48,11 @@ class Company extends Model implements AuditableContract
     public function emails()
     {
         return $this->morphMany(Email::class, 'emailable');
+    }
+
+    public function companiesOccupations()
+    {
+        return $this->hasMany(CompanyOccupation::class);
     }
 
     public function audit()
