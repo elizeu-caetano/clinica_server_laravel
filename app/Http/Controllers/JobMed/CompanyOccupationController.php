@@ -46,7 +46,7 @@ class CompanyOccupationController extends Controller
     }
 
 
-    public function update(StoreUpdateCompanyOccupationRequest $request)
+    public function update(Request $request)
     {
         Gate::authorize('update_company_occupation');
 

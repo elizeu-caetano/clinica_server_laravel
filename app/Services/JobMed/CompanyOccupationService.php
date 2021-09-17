@@ -52,9 +52,23 @@ class CompanyOccupationService
 
     public function update(object $request)
     {
-        $data = $request->except(['created_at', 'cbo']);
+        $id = $request->occupation_id;
+        $procedureIds = [];
+        $dangerIds = [];
 
-        return $this->repository->update($data);
+        foreach ($request->procedures as $procedure) {
+            if ($procedure['hired']) {
+                array_push($procedureIds, $procedure['id']);
+            }
+        }
+
+        foreach ($request->dangers as $danger) {
+            if ($danger['hired']) {
+                array_push($dangerIds, $danger['id']);
+            }
+        }
+
+        return $this->repository->update($id, $procedureIds, $dangerIds);
     }
 
     public function destroy(string $id)

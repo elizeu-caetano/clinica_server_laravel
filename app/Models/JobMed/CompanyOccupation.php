@@ -37,12 +37,12 @@ class CompanyOccupation extends Model implements AuditableContract
         return $this->belongsTo(Occupation::class);
     }
 
-    private function dangers()
+    public function dangers()
     {
         return $this->belongsToMany(Danger::class);
     }
 
-    private function procedures()
+    public function procedures()
     {
         return $this->belongsToMany(Procedure::class);
     }

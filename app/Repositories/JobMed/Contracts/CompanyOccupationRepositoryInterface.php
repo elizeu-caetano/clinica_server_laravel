@@ -12,7 +12,7 @@ interface CompanyOccupationRepositoryInterface {
 
     public function show(int $id);
 
-    public function update(array $data);
+    public function update(int $id, array $procedureIds, array $dangerIds);
 
     public function destroy(string $id);
 }
