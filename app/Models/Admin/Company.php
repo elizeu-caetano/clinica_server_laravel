@@ -55,6 +55,11 @@ class Company extends Model implements AuditableContract
         return $this->hasMany(CompanyOccupation::class);
     }
 
+    public function discountTables()
+    {
+        return $this->belongsToMany(DiscountTable::class);
+    }
+
     public function audit()
     {
         return $this->morphMany(Audit::class, 'auditable');

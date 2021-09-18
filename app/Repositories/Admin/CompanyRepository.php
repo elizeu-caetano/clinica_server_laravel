@@ -3,6 +3,7 @@
 namespace App\Repositories\Admin;
 
 use App\Http\Resources\Admin\CompanyResource;
+use App\Http\Resources\Admin\DiscountTableResource;
 use App\Models\Acl\User;
 use App\Models\Admin\Company;
 use App\Repositories\Admin\Contracts\CompanyRepositoryInterface;
@@ -189,6 +190,38 @@ class CompanyRepository implements CompanyRepositoryInterface
             return ['status' => true, 'companies' => CompanyResource::collection($companies), 'notCompanies' => $notCompanies->get()];
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'A Empresa não foi adicionada', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function attachDiscountTablesCompany(int $company_id, int $disconutTableId)
+    {
+        try {
+            $company = $this->repository->find($company_id);
+
+            $company->discountTables()->sync($disconutTableId);
+
+            return ['status' => true, 'message' => 'A Tabela de Descontos foi adicionada'];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Tabela de Descontos não foi adicionada', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function discountTablesCompany(string $uuid)
+    {
+        try {
+            $company = $this->repository->where('uuid', $uuid)->first();
+
+            $disconuntTable = $company->discountTables()->first();
+
+            if ($disconuntTable) {
+                $disconuntTableCompany = new DiscountTableResource($disconuntTable);
+            } else {
+                $disconuntTableCompany = '';
+            }
+
+            return ['status' => true, 'data' => $disconuntTableCompany];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Tabela de Descontos não foi adicionada', 'error' => $th->getMessage()];
         }
     }
 }

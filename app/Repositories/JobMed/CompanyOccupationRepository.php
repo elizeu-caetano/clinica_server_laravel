@@ -39,7 +39,6 @@ class CompanyOccupationRepository implements CompanyOccupationRepositoryInterfac
             $occupations  = Occupation::whereNotIn('id', $occupationsId)
                 ->where('active', true)
                 ->where('deleted', false)
-                ->where('deleted', false)
                 ->where('type', ' Ocupação')
                 ->where(function ($query) use ($search) {
                     $query->where('name', 'LIKE', '%' . $search . '%')

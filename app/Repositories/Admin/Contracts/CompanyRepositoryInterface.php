@@ -23,4 +23,8 @@ interface CompanyRepositoryInterface {
     public function destroy(string $uuid);
 
     public function companiesUser(string $uuid);
+
+    public function attachDiscountTablesCompany(int $company_id, int $disconutTableId);
+
+    public function discountTablesCompany(string $uuid);
 }

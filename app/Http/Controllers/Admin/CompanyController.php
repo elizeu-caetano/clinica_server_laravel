@@ -88,4 +88,18 @@ class CompanyController extends Controller
 
         return $this->service->companiesUser($uuid);
     }
+
+    public function discountTablesCompany($uuid)
+    {
+        Gate::authorize('add_discount_tables_company');
+
+        return $this->service->discountTablesCompany($uuid);
+    }
+
+    public function attachDiscountTablesCompany(Request $request)
+    {
+        Gate::authorize('add_discount_tables_company');
+
+        return $this->service->attachDiscountTablesCompany($request);
+    }
 }

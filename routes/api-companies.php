@@ -13,3 +13,5 @@ Route::put('inactivate/{uuid}', [CompanyController::class, 'inactivate']);
 Route::put('deleted/{uuid}', [CompanyController::class, 'deleted']);
 Route::put('recover/{uuid}', [CompanyController::class, 'recover']);
 Route::get('user/{uuid}', [CompanyController::class, 'companiesUser']);
+Route::post('discount-tables/attach', [CompanyController::class, 'attachDiscountTablesCompany']);
+Route::get('discount-tables/{uuid}', [CompanyController::class, 'discountTablesCompany']);

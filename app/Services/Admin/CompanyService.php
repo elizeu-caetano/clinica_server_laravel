@@ -74,4 +74,16 @@ class CompanyService
     {
         return $this->repository->companiesUser($uuid);
     }
+
+    public function attachDiscountTablesCompany(object $request)
+    {
+        $company_id = $request->company_id;
+        $discountTable_id = $request->discountTable_id;
+        return $this->repository->attachDiscountTablesCompany($company_id, $discountTable_id);
+    }
+
+    public function discountTablesCompany(string $uuid)
+    {
+        return $this->repository->discountTablesCompany($uuid);
+    }
 }
