@@ -19,7 +19,7 @@ class DiscountTableResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'active' => $this->active,
+            'active' => $this->active ? true : false,
             'deleted' => $this->deleted,
             'created_at' => Carbon::make($this->created_at)->format('d/m/Y H:i:s')
         ];

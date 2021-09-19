@@ -12,13 +12,18 @@ class DiscountTableProcedure extends Model implements AuditableContract
 {
     use HasFactory, Auditable, AuditTrait;
 
-    protected $fillable = ['price', 'is_percentage'];
+    protected $fillable = ['procedure_id', 'price', 'is_percentage'];
 
     public function generateTags(): array
     {
         return [
             'Tabela de Descontos dos Procedimentos'
         ];
+    }
+
+    public function discountTables()
+    {
+        return $this->belongsToMany(DiscountTable::class);
     }
 
     public function audit()

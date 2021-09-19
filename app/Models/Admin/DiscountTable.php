@@ -25,4 +25,9 @@ class DiscountTable extends Model implements AuditableContract
     {
         return $this->morphMany(Audit::class, 'auditable');
     }
+
+    public function procedures()
+    {
+        return $this->belongsToMany(Procedure::class);
+    }
 }

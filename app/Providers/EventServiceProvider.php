@@ -9,6 +9,22 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
+use App\Models\Acl\{
+    Contractor
+};
+
+use App\Observers\{
+    ContractorObserver
+};
+
+use App\Models\Admin\{
+    DiscountTable
+};
+
+use App\Observers\Admin\{
+    DiscountTableObserver
+};
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -35,6 +51,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Contractor::observe(ContractorObserver::class);
+        DiscountTable::observe(DiscountTableObserver::class);
     }
 }
