@@ -17,14 +17,6 @@ use App\Observers\{
     ContractorObserver
 };
 
-use App\Models\Admin\{
-    DiscountTable
-};
-
-use App\Observers\Admin\{
-    DiscountTableObserver
-};
-
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -52,6 +44,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Contractor::observe(ContractorObserver::class);
-        DiscountTable::observe(DiscountTableObserver::class);
     }
 }

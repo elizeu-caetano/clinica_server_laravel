@@ -4,6 +4,7 @@ namespace App\Repositories\Admin;
 
 use App\Http\Resources\Admin\DiscountTableResource;
 use App\Models\Admin\DiscountTable;
+use App\Models\Admin\Procedure;
 use App\Repositories\Admin\Contracts\DiscountTableRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,6 +46,19 @@ class DiscountTableRepository implements DiscountTableRepositoryInterface
             return ['status' => true, 'message' => 'A Tabela de Desconto foi cadastrada.', 'data' => new DiscountTableResource($discountTable)];
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'A Tabela de Desconto não foi cadastrada.', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function storeProceduresDiscountTable(int $discountTableId, array $data)
+    {
+        try {
+            $discountTable = $this->repository->find($discountTableId);
+
+            $discountTable->procedures()->attach($data);
+
+            return ['status' => true];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'Os Procedimetos não foram cadastrados na Tabela de Desconto.', 'error' => $th->getMessage()];
         }
     }
 

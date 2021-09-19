@@ -12,7 +12,9 @@ class DiscountTableProcedure extends Model implements AuditableContract
 {
     use HasFactory, Auditable, AuditTrait;
 
-    protected $fillable = ['procedure_id', 'price', 'is_percentage'];
+    protected $fillable = ['discount_table_id', 'procedure_id', 'price', 'is_percentage'];
+
+    protected $table = 'discount_table_procedure';
 
     public function generateTags(): array
     {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Models\Admin\Procedure;
 use App\Repositories\Admin\Contracts\DiscountTableRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\support\Str;
@@ -30,7 +31,26 @@ class DiscountTableService
         $data['contractor_id'] = $request->contractor_id ? $request->contractor_id : Auth::user()->contractor_id;
         $data['uuid'] = Str::uuid();
 
-        return $this->repository->store($data);
+        $discountTable = $this->repository->store($data);
+
+        if ($discountTable['status']) {
+            $procedures = Procedure::where('contractor_id', Auth::user()->contractor_id)->get();
+
+            $data = [];
+            foreach ($procedures as $procedure) {
+                $data[$procedure->id] = [
+                    'price' => $procedure->price,
+                ];
+            }
+
+            $proceduresDiscountTable = $this->repository->storeProceduresDiscountTable($discountTable['data']->id, $data);
+            if (!$proceduresDiscountTable['status']) {
+                $discountTable['data']->delete();
+                return $proceduresDiscountTable;
+            }
+        }
+
+        return $discountTable;
     }
 
     public function show(string $uuid)

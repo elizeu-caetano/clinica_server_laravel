@@ -21,4 +21,6 @@ interface DiscountTableRepositoryInterface {
     public function recover(string $uuid);
 
     public function destroy(string $uuid);
+
+    public function storeProceduresDiscountTable(int $discountTableId, array $data);
 }
