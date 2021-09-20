@@ -12,3 +12,5 @@ Route::put('activate/{uuid}', [DiscountTableController::class, 'activate']);
 Route::put('inactivate/{uuid}', [DiscountTableController::class, 'inactivate']);
 Route::put('deleted/{uuid}', [DiscountTableController::class, 'deleted']);
 Route::put('recover/{uuid}', [DiscountTableController::class, 'recover']);
+Route::get('procedures/{uuid}', [DiscountTableController::class, 'proceduresDiscountTable']);
+Route::put('procedure-update/{uuid}', [DiscountTableController::class, 'updateProcedureDiscountTable']);

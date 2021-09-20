@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Admin;
 
+use App\Http\Resources\Admin\DiscountTableProceduresResource;
 use App\Http\Resources\Admin\DiscountTableResource;
 use App\Models\Admin\DiscountTable;
+use App\Models\Admin\DiscountTableProcedure;
 use App\Models\Admin\Procedure;
 use App\Repositories\Admin\Contracts\DiscountTableRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -49,12 +51,11 @@ class DiscountTableRepository implements DiscountTableRepositoryInterface
         }
     }
 
-    public function storeProceduresDiscountTable(int $discountTableId, array $data)
+    public function storeProceduresDiscountTable(array $data)
     {
         try {
-            $discountTable = $this->repository->find($discountTableId);
 
-            $discountTable->procedures()->attach($data);
+            DiscountTableProcedure::insert($data);
 
             return ['status' => true];
         } catch (\Throwable $th) {
@@ -154,6 +155,35 @@ class DiscountTableRepository implements DiscountTableRepositoryInterface
             return ['status' => true, 'message' => 'A Tabela de Desconto foi excluída.'];
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'A Tabela de Desconto não foi excluída.', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function proceduresDiscountTable(string $uuid)
+    {
+        try {
+            $discountTable = $this->repository->where('uuid', $uuid)->where('contractor_id', Auth::user()->contractor_id)->first();
+
+            $procedures = $discountTable->discountTableProcedures()->get();
+
+            return [
+                'status' => true,
+                'data' => DiscountTableProceduresResource::collection($procedures)
+            ];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'Não foi possível carregar os dados.', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function updateProcedureDiscountTable(int $id, string $price)
+    {
+        try {
+            $discountTableProcedure = DiscountTableProcedure::find($id);
+
+            $discountTableProcedure->update(['price' => $price ]);
+
+            return ['status' => true, 'message' => 'A Tabela de Desconto foi editada.'];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'A Tabela de Desconto não foi editada.', 'error' => $th->getMessage()];
         }
     }
 }

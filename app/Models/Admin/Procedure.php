@@ -59,8 +59,8 @@ class Procedure extends Model implements AuditableContract
         return $this->belongsToMany(Occupation::class);
     }
 
-    public function discountTables()
+    public function discountTableProcedures()
     {
-        return $this->belongsToMany(DiscountTable::class);
+        return $this->hasMany(DiscountTableProcedure::class);
     }
 }

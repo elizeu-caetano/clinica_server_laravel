@@ -79,4 +79,18 @@ class DiscountTableController extends Controller
 
         return $this->service->destroy($uuid);
     }
+
+    public function proceduresDiscountTable($uuid)
+    {
+        //Gate::authorize('destroy_discount_table');
+
+        return $this->service->proceduresDiscountTable($uuid);
+    }
+
+    public function updateProcedureDiscountTable(Request $request)
+    {
+        //Gate::authorize('destroy_discount_table');
+
+        return $this->service->updateProcedureDiscountTable($request);
+    }
 }

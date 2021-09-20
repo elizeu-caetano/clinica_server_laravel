@@ -26,7 +26,6 @@ class DiscountTableService
 
     public function store(object $request)
     {
-
         $data = $request->all();
         $data['contractor_id'] = $request->contractor_id ? $request->contractor_id : Auth::user()->contractor_id;
         $data['uuid'] = Str::uuid();
@@ -38,12 +37,15 @@ class DiscountTableService
 
             $data = [];
             foreach ($procedures as $procedure) {
-                $data[$procedure->id] = [
+                $data[] = [
+                    'discount_table_id' => $discountTable['data']->id,
+                    'procedure_id' => $procedure->id,
                     'price' => $procedure->price,
+                    'created_at' => now(),
                 ];
             }
 
-            $proceduresDiscountTable = $this->repository->storeProceduresDiscountTable($discountTable['data']->id, $data);
+            $proceduresDiscountTable = $this->repository->storeProceduresDiscountTable($data);
             if (!$proceduresDiscountTable['status']) {
                 $discountTable['data']->delete();
                 return $proceduresDiscountTable;
@@ -88,5 +90,18 @@ class DiscountTableService
     public function destroy(string $uuid)
     {
         return $this->repository->destroy($uuid);
+    }
+
+    public function proceduresDiscountTable(string $uuid)
+    {
+        return $this->repository->proceduresDiscountTable($uuid);
+    }
+
+    public function updateProcedureDiscountTable(object $request)
+    {
+        $discountTableProcedureId = $request->discountTableProcedureId;
+        $price = str_replace(',', '.', str_replace(array('R$',' ','.'), '', $request->price));
+
+        return $this->repository->updateProcedureDiscountTable($discountTableProcedureId, $price);
     }
 }
