@@ -3,6 +3,7 @@
 namespace App\Repositories\Admin;
 
 use App\Http\Resources\Admin\ProcedureResource;
+use App\Models\Admin\DiscountTable;
 use App\Models\Admin\Procedure;
 use App\Repositories\Admin\Contracts\ProcedureRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,31 @@ class ProcedureRepository implements ProcedureRepositoryInterface
             return ['status' => true, 'message' => 'O Procedimento foi cadastrado.', 'data' => new ProcedureResource($procedure)];
         } catch (\Throwable $th) {
             return ['status' => false, 'message' => 'O Procedimento não foi cadastrado.', 'error' => $th->getMessage()];
+        }
+    }
+
+    public function storeDiscountTablesProcedure(int $id)
+    {
+        try {
+            $procedure = $this->repository->find($id);
+
+            $discountTables = DiscountTable::where('contractor_id', Auth::user()->contractor_id)->get();
+
+            $data = [];
+            foreach ($discountTables as $discountTable) {
+                $data[] = [
+                    'discount_table_id' => $discountTable->id,
+                    'procedure_id'=> $procedure->id,
+                    'price' => $procedure->price,
+                    'created_at' => now()
+                ];
+            }
+
+            $procedure->discountTableProcedures()->insert($data);
+
+            return ['status' => true];
+        } catch (\Throwable $th) {
+            return ['status' => false, 'message' => 'O Procedimento não foi cadastrado na tabela de descontos.', 'error' => $th->getMessage()];
         }
     }
 

@@ -29,7 +29,17 @@ class ProcedureService
         $data['uuid'] = Str::uuid();
         $data['contractor_id'] = Auth::user()->contractor_id;
 
-        return $this->procedureRepository->store($data);
+        $procedure = $this->procedureRepository->store($data);
+
+        if ($procedure['status']) {
+            $discountTablesProcedure = $this->procedureRepository->storeDiscountTablesProcedure($procedure['data']->id);
+            if (!$discountTablesProcedure['status']) {
+                $procedure['data']->delete();
+                return  $discountTablesProcedure;
+            }
+        }
+
+        return $procedure;
     }
 
     public function show(string $uuid)

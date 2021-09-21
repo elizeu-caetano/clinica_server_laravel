@@ -8,6 +8,8 @@ interface ProcedureRepositoryInterface {
 
     public function store(array $request);
 
+    public function storeDiscountTablesProcedure(int $id);
+
     public function show(string $uuid);
 
     public function update(array $request);
@@ -21,4 +23,5 @@ interface ProcedureRepositoryInterface {
     public function inactivate(string $uuid);
 
     public function destroy(string $uuid);
+
 }

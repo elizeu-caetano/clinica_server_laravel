@@ -8,6 +8,8 @@ interface DiscountTableRepositoryInterface {
 
     public function store(array $data);
 
+    public function storeProceduresDiscountTable(string $uuid);
+
     public function show(string $uuid);
 
     public function update(array $data);
@@ -21,8 +23,6 @@ interface DiscountTableRepositoryInterface {
     public function recover(string $uuid);
 
     public function destroy(string $uuid);
-
-    public function storeProceduresDiscountTable(array $data);
 
     public function proceduresDiscountTable(string $uuid);
 

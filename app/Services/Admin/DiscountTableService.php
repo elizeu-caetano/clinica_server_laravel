@@ -33,19 +33,8 @@ class DiscountTableService
         $discountTable = $this->repository->store($data);
 
         if ($discountTable['status']) {
-            $procedures = Procedure::where('contractor_id', Auth::user()->contractor_id)->get();
+            $proceduresDiscountTable = $this->repository->storeProceduresDiscountTable($discountTable['data']->uuid);
 
-            $data = [];
-            foreach ($procedures as $procedure) {
-                $data[] = [
-                    'discount_table_id' => $discountTable['data']->id,
-                    'procedure_id' => $procedure->id,
-                    'price' => $procedure->price,
-                    'created_at' => now(),
-                ];
-            }
-
-            $proceduresDiscountTable = $this->repository->storeProceduresDiscountTable($data);
             if (!$proceduresDiscountTable['status']) {
                 $discountTable['data']->delete();
                 return $proceduresDiscountTable;

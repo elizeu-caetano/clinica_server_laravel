@@ -51,11 +51,24 @@ class DiscountTableRepository implements DiscountTableRepositoryInterface
         }
     }
 
-    public function storeProceduresDiscountTable(array $data)
+    public function storeProceduresDiscountTable(string $uuid)
     {
         try {
 
-            DiscountTableProcedure::insert($data);
+            $procedures = Procedure::where('contractor_id', Auth::user()->contractor_id)->get();
+            $discountTable = DiscountTable::where('uuid', $uuid)->first();
+
+            $data = [];
+            foreach ($procedures as $procedure) {
+                $data[] = [
+                    'discount_table_id' => $discountTable->id,
+                    'procedure_id' => $procedure->id,
+                    'price' => $procedure->price,
+                    'created_at' => now(),
+                ];
+            }
+
+            $discountTable->discountTableProcedures()->insert($data);
 
             return ['status' => true];
         } catch (\Throwable $th) {
